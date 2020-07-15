@@ -211,6 +211,13 @@ public class MainActivity extends AppCompatActivity
         int readLen = 0;
         Bitmap bitmap = null;
         int lastPercent = 0;
+        //test ian for progress bar
+        ProgressBar ProBar;
+        int counter = 0;
+        ProBar = (ProgressBar) findViewById(R.id.ProBar);
+
+
+        //
 
         byte[] imgBytes;
 
@@ -234,8 +241,10 @@ public class MainActivity extends AppCompatActivity
                 if (percent - lastPercent >= 10) {
                     //updateProgress(percent);
                     lastPercent = percent;
+                    ProBar.setProgress(lastPercent);// new code
                 }
             }
+            ProBar.setProgress(100);// new code
 
            // updateProgress(100);
             bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imageLen);
