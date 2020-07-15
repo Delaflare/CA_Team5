@@ -81,11 +81,13 @@ public class GameActivity extends AppCompatActivity {
                         }, 1000);
                         isFlipped[i] = false;
                         isFlipped[prevPos] = false;
+                        //add sound
                         Toast.makeText(getApplicationContext(), "Not Match", Toast.LENGTH_SHORT).show();
                     }
                     else{
                         adapter.flipImage(i, shuffledImages[i]);
                         isFlipped[i] =true;
+                        // add sound
                         Toast.makeText(getApplicationContext(), "Match", Toast.LENGTH_SHORT).show();
                         count++;
                         System.out.println(count);
