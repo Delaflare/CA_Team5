@@ -18,8 +18,7 @@ public class MainActivity extends AppCompatActivity {
         //hahah
 
         String test = "Lyra is here";
-        String test1 = "Ian left the group";
-        String test2 = "Weeeeeeeee";
+        String test1 = "shashank is here";
 
 //////////////////////
         ////////////// Start play music feature////////////////////
