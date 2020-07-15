@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CA_Team5</string>
+    <string name="yes">Ok</string>
+    <string name="no">Cancel</string>
 </resources>
