@@ -142,13 +142,13 @@ public class MainActivity extends AppCompatActivity
         player.start();
         player.setLooping(true);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true)
-                    System.out.println("Running...");
-            }
-        }).start();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true)
+//                    System.out.println("Running...");
+//            }
+//        }).start();
 
         ///////////////////end  music feature///////////
 
@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-    public static   class MyJavaScriptInterface   //Wai Testing
+    public static class MyJavaScriptInterface   //Wai Testing
     {
         public  MyJavaScriptInterface()
         {

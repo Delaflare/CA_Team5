@@ -2,4 +2,6 @@
     <string name="app_name">CA_Team5</string>
     <string name="fetch">FETCH</string>
     <string name="no">Cancel</string>
+    <string name="defaultURL">https://stocksnap.io</string>
+    <string name="download">Download</string>
 </resources>
