@@ -2,13 +2,16 @@ package iss.workshop.ca_team5;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements View.OnClickListener{
 
     MediaPlayer player;
-
 
 
     @Override
@@ -34,7 +37,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }).start();
         ///////////////////end  music feature///////////
+
+        //button for start game
+        Button btnStart = findViewById(R.id.start);
+        if(btnStart != null)
+            btnStart.setOnClickListener(this);
     }
+
+    @Override
+    public void onClick(View v){
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
+    }
+
+
 
 
 
