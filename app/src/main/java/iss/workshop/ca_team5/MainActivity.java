@@ -13,4 +13,5 @@ public class MainActivity extends AppCompatActivity {
         //hahah
     }
     String test = "Lyra is here";
+    String test1 = "Ian left the group";
 }
