@@ -31,6 +31,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -213,6 +215,9 @@ public class MainActivity extends AppCompatActivity
         int lastPercent = 0;
         //test ian for progress bar
         ProgressBar ProBar;
+
+        Timer T = new Timer();
+
         int counter = 0;
         ProBar = (ProgressBar) findViewById(R.id.ProBar);
 
@@ -244,7 +249,10 @@ public class MainActivity extends AppCompatActivity
                     ProBar.setProgress(lastPercent);// new code
                 }
             }
+            T.schedule(null,1000);// new code
             ProBar.setProgress(100);// new code
+
+
 
            // updateProgress(100);
             bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imageLen);
