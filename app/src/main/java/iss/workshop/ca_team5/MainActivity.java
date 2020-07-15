@@ -7,8 +7,6 @@ import android.os.Bundle;
 
 public class MainActivity extends AppCompatActivity {
 
-
-
     MediaPlayer player;
 
 
