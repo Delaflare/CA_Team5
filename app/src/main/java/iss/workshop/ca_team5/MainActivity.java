@@ -39,19 +39,23 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity
     implements View.OnClickListener{
 
-    MediaPlayer player;
+
 
     //Wai Testing
     GridView gridView;
     static List<String> workingImages =new ArrayList<String>();
     private String mUrl= "https://via.placeholder.com/500";
     private WebView mWebView;
-    private ProgressBar mProgressBar;
+    private ProgressBar mProgressBar;// do we need this
+    private Intent serviceIntent;// for service
     private static final String EXTENSION_PATTERN ="([^\\s]+(\\.(?i)(jpg|png))$)";
 
     //
     public static int PROGRESS_UPDATE = 1;
     public static int DOWNLOAD_COMPLETED = 2;
+
+
+
 
     @SuppressLint("HandlerLeak")
     Handler mainHdl = new Handler() {
@@ -79,6 +83,10 @@ public class MainActivity extends AppCompatActivity
         mWebView = findViewById(R.id.web_view);
         mWebView.setVisibility(View.GONE);  //Hidden Web view
 
+        ///////////ian code for service (injection
+        serviceIntent = new Intent(getApplicationContext(), MyService.class);// add background music
+        startService(new Intent(getApplicationContext(),MyService.class));
+        /////////. end of injected code
         try {
             this.getSupportActionBar().hide();   //Remove the action bar
         }
@@ -138,21 +146,7 @@ public class MainActivity extends AppCompatActivity
         String test = "Lyra is here";
         String test1 = "shashank is here";
 
-//////////////////////
-        ////////////// Start play music feature////////////////////
-        player = MediaPlayer.create(this, R.raw.over_the_rainbow);
-        player.start();
-        player.setLooping(true);
 
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                while (true)
-//                    System.out.println("Running...");
-//            }
-//        }).start();
-
-        ///////////////////end  music feature///////////
 
         //button for start game
         Button btnStart = findViewById(R.id.start);
@@ -268,30 +262,6 @@ public class MainActivity extends AppCompatActivity
         mainHdl.sendMessage(msg);
     }
     //////////////////////////////
-    // for background music
-        @Override
-        protected void onPause () {
-            super.onPause();
-            player.pause();
-        }
-
-        @Override
-        protected void onResume () {
-            super.onResume();
-            player.start();
-        }
-
-        @Override
-        protected void onStop () {
-            super.onStop();
-            player.seekTo(0);
-        }
-
-        @Override
-        protected void onDestroy () {
-            super.onDestroy();
-            player.release();
-        }
 
 
     }
