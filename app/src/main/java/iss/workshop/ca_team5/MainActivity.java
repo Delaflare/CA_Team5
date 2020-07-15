@@ -2,10 +2,13 @@ package iss.workshop.ca_team5;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceError;
@@ -24,7 +27,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+    implements View.OnClickListener{
 
     MediaPlayer player;
 
@@ -122,7 +126,20 @@ public class MainActivity extends AppCompatActivity {
         }).start();
 
         ///////////////////end  music feature///////////
+
+        //button for start game
+        Button btnStart = findViewById(R.id.start);
+        if(btnStart != null)
+            btnStart.setOnClickListener(this);
     }
+
+    @Override
+    public void onClick(View v){
+        Intent intent = new Intent(this, GameActivity.class);
+        startActivity(intent);
+    }
+
+
 
 
 
