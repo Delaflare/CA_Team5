@@ -19,7 +19,7 @@ public class MainActivity extends AppCompatActivity {
 
         String test = "Lyra is here";
         String test1 = "Ian left the group";
-
+///Testing wai
 //////////////////////
         ////////////// Start play music feature////////////////////
         player = MediaPlayer.create(this, R.raw.over_the_rainbow);
