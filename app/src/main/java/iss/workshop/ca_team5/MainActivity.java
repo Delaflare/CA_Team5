@@ -12,4 +12,5 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         //hahah
     }
+    String test = "Lyra is here";
 }
