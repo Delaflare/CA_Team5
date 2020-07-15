@@ -1,27 +1,34 @@
 package iss.workshop.ca_team5;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -41,6 +48,24 @@ public class MainActivity extends AppCompatActivity
     private static final String EXTENSION_PATTERN ="([^\\s]+(\\.(?i)(jpg|png))$)";
 
     //
+    public static int PROGRESS_UPDATE = 1;
+    public static int DOWNLOAD_COMPLETED = 2;
+
+    @SuppressLint("HandlerLeak")
+    Handler mainHdl = new Handler() {
+        public void handleMessage(@NonNull Message msg) {
+            if (msg.what == PROGRESS_UPDATE) {
+                Toast.makeText(MainActivity.this,
+                        msg.arg1 + "%", Toast.LENGTH_SHORT).show();
+            }
+            else if (msg.what == DOWNLOAD_COMPLETED) {
+                GridView listView=findViewById(R.id.gridview);
+                ImageView imageView = (ImageView) listView.getChildAt(1);
+                if (imageView != null)
+                    imageView.setImageBitmap((Bitmap) msg.obj);
+            }
+        }
+    };
 
 
     @Override
@@ -58,8 +83,8 @@ public class MainActivity extends AppCompatActivity
         catch (NullPointerException e) {}
 
         //finding list view
-        final GridViewAdapter adapter=new GridViewAdapter(this,R.layout.first_grid);
-        final GridView listView=findViewById(R.id.gridview);
+        GridViewAdapter adapter=new GridViewAdapter(this,R.layout.first_grid);
+        GridView listView=findViewById(R.id.gridview);
         if(listView!=null)
         {
             listView.setAdapter(adapter);
@@ -140,10 +165,7 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
-
-    public static class MyJavaScriptInterface   //Wai Testing
+    public static   class MyJavaScriptInterface   //Wai Testing
     {
         public  MyJavaScriptInterface()
         {
@@ -177,8 +199,56 @@ public class MainActivity extends AppCompatActivity
 
             this.list = workingImages.toArray(list);
 
-
+            new MainActivity().downloadImage(workingImages.get(1));
         }
+    }
+
+
+
+    protected  void downloadImage(String target) {
+        int imageLen = 0;
+        int totalSoFar = 0;
+        int readLen = 0;
+        Bitmap bitmap = null;
+        int lastPercent = 0;
+
+        byte[] imgBytes;
+
+        try {
+            URL url = new URL(target);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.connect();
+
+            imageLen = conn.getContentLength();
+            imgBytes = new byte[imageLen];
+
+            InputStream in = url.openStream();
+            BufferedInputStream bufIn = new BufferedInputStream(in, 2048);
+
+            byte[] data = new byte[1024];
+            while ((readLen = bufIn.read(data)) != -1) {
+                System.arraycopy(data, 0, imgBytes, totalSoFar, readLen);
+                totalSoFar += readLen;
+
+                int percent = Math.round(totalSoFar * 100)/imageLen;
+                if (percent - lastPercent >= 10) {
+                    //updateProgress(percent);
+                    lastPercent = percent;
+                }
+            }
+
+           // updateProgress(100);
+            bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imageLen);
+            updateImage(bitmap);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    protected  void updateImage(Bitmap bitmap) {
+        Message msg = new Message();
+        msg.what = DOWNLOAD_COMPLETED;
+        msg.obj = bitmap;
+        mainHdl.sendMessage(msg);
     }
     //////////////////////////////
     // for background music
@@ -208,4 +278,5 @@ public class MainActivity extends AppCompatActivity
 
 
     }
+
 //////////////////////////////
