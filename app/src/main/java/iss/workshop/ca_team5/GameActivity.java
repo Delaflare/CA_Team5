@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -62,20 +63,22 @@ public class GameActivity extends AppCompatActivity {
                 if(!isFlipped[i] && click == 1){
 
                     if(!isMatched(prevPos,i)){
+                        click++;
                         currentPos = i;
                         adapter.flipImage(i, shuffledImages[i]);
                         //adapter.flipBack(currentPos, prevPos);
-                        try{runOnUiThread(new Runnable() {
+                        final Handler handler = new Handler();
+                        handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 GridAdapter adapter = (GridAdapter) gridView.getAdapter();
                                 adapter.flipBack(currentPos, prevPos);
+                                prevPos = -1;
+                                currentPos = -1;
+                                click = 0;
+
                             }
-                        });
-                            Thread.sleep(300);
-                        } catch (InterruptedException e){
-                            e.printStackTrace();
-                        }
+                        }, 1000);
                         isFlipped[i] = false;
                         isFlipped[prevPos] = false;
                         Toast.makeText(getApplicationContext(), "Not Match", Toast.LENGTH_SHORT).show();
@@ -86,10 +89,13 @@ public class GameActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "Match", Toast.LENGTH_SHORT).show();
                         count++;
                         System.out.println(count);
+                        prevPos = -1;
+                        currentPos = -1;
+                        click = 0;
+
                     }
-                    prevPos = -1;
-                    currentPos = -1;
-                    click = 0;
+
+
                 }
             }
         });
