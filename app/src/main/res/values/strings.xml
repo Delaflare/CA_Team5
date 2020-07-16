@@ -4,4 +4,6 @@
     <string name="no">Cancel</string>
     <string name="defaultURL">https://stocksnap.io</string>
     <string name="download">Download</string>
+    <string name="matches">0/6 match count</string>
+    <string name="timer">0:00:00</string>
 </resources>
