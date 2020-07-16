@@ -129,8 +129,7 @@ public class MainActivity extends AppCompatActivity
                 mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
                 mWebView.loadUrl(mUrl);
             }
-        } else {
-
+        } else if (v.getId() == R.id.image_view) {
             String img = workingImages.get(v.getId());
             if (selectedImage.contains(img)) {
                 ((ImageView) v).setBackground(null);
@@ -147,6 +146,10 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(this, "Next Activity", Toast.LENGTH_SHORT).show();
                 }
             }
+
+        }else if(v.getId() == R.id.temp){
+            Intent intent = new Intent(this, GameActivity.class);
+            startActivity(intent);
         }
     }
 
