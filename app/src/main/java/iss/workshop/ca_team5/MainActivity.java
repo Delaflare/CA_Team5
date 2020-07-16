@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     private GridViewAdapter gridAdapter;
 
     ProgressBar ProBar;
+    ProgressBar ProBar2;
 
     public static int PROGRESS_UPDATE = 1;
     public static int DOWNLOAD_COMPLETED = 2;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity
     //for music
     private Intent serviceIntent;
 
-
+    public static int downloadedNo = 0;
 
 
     @Override
@@ -177,6 +178,9 @@ public class MainActivity extends AppCompatActivity
                         for (String i : workingImages) {
                             try {
                                 downloadImage(i);
+                                downloadedNo++;
+                                ProBar2 = (ProgressBar) findViewById(R.id.ProBar2);
+                                ProBar2.setProgress(downloadedNo);
                                 System.out.print("downloading");
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -185,6 +189,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             }).start();
+            downloadedNo = 0;
         }}
 
     protected void downloadImage(String target) throws IOException {
@@ -194,7 +199,7 @@ public class MainActivity extends AppCompatActivity
         Bitmap bitmap = null;
         int lastPercent = 0;
         byte[] imgBytes;
-        ProBar = (ProgressBar) findViewById(R.id.ProBar);
+        ProBar = (ProgressBar) findViewById(R.id.ProBar1);
 
         try {
             URL url = new URL(target);
