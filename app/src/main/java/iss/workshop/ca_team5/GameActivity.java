@@ -2,19 +2,22 @@ package iss.workshop.ca_team5;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
-import android.app.Activity;
-import android.view.View;
 
-import java.util.ArrayList;
 import java.util.Locale;
 import android.widget.TextView;
 
@@ -45,6 +48,7 @@ public class GameActivity extends AppCompatActivity {
 
     //timer test-code
     private int timerSec = 0;
+    private int endTime = 0;
     private boolean running;
     private boolean wasRunning;
 
@@ -98,8 +102,9 @@ public class GameActivity extends AppCompatActivity {
                                 prevPos = -1;
                                 currentPos = -1;
                                 click = 0;
+
                             }
-                        }, 1000);
+                        }, 500);
                         isFlipped[i] = false;
                         isFlipped[prevPos] = false;
                         //add sound
@@ -115,12 +120,17 @@ public class GameActivity extends AppCompatActivity {
                         prevPos = -1;
                         currentPos = -1;
                         click = 0;
-                        if (count == 6) {running = false;}
+                        //
+                        //THE GAME ENDS HERE!
+                        if (count == 6) {running = false;
+                            endTime = timerSec;
+                            showEndDialog(endTime);
+                        }
 
                         final TextView countView
                         = (TextView)findViewById(
                         R.id.countMatches);
-                        if (count > 0) {countView.setText(count + "/6 matches");}
+                        if (count > 0) {countView.setText(count + " out of 6 matched");}
                     }
                 }
             }
@@ -225,7 +235,7 @@ public class GameActivity extends AppCompatActivity {
                 String time
                         = String
                         .format(Locale.getDefault(),
-                                "%d:%02d:%02d", hours,
+                                "%d:%02d",
                                 minutes, secs);
 
                 timeView.setText(time);
@@ -237,5 +247,35 @@ public class GameActivity extends AppCompatActivity {
                 handler.postDelayed(this, 1000);
             }
         });
+    }
+    private void showEndDialog(int endTime) {
+
+        int minutes = (endTime % 3600) / 60;
+        int secs = endTime % 60;
+        String time
+                = String
+                .format(Locale.getDefault(),
+                        "%d:%02d",
+                        minutes, secs);
+        AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+
+        builder.setPositiveButton("Play Again!", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+                dialog.dismiss();
+
+            }
+        });
+
+        LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = inflater.inflate(R.layout.game_end_dialog, null);
+
+        TextView messageView = (TextView)dialoglayout.findViewById(R.id.timetaken);
+        if (minutes!=0){messageView.setText("You took " + minutes + " minutes and " + secs + " seconds!");}
+        else{messageView.setText("Amazing! You only took "  + secs + " seconds!");}
+
+        builder.setView(dialoglayout);
+        builder.show();
     }
 }
