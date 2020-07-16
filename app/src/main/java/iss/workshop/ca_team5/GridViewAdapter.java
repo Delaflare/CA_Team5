@@ -12,12 +12,12 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 
-public class TGridViewAdapter extends ArrayAdapter {
+public class GridViewAdapter extends ArrayAdapter {
     private Context context;
     private int layoutResourceId;
     private ArrayList data = new ArrayList();
 
-    public TGridViewAdapter(Context context, int layoutResourceId, ArrayList data) {
+    public GridViewAdapter(Context context, int layoutResourceId, ArrayList data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
