@@ -15,7 +15,9 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -41,17 +43,18 @@ public class MainActivity extends AppCompatActivity
 
     public static int PROGRESS_UPDATE = 1;
     public static int DOWNLOAD_COMPLETED = 2;
-    public  static int count=0;
-    private  boolean startCanDownload=false;
-    public  static boolean loadedFlag=false;
-    public  static String prev_url="";
+    public static int count = 0;
+    private boolean startCanDownload = false;
+    public static boolean loadedFlag = false;
+    public static String prev_url = "";
     private ArrayList<GridItem> imgItems = new ArrayList<>();
 
     //for getting urls
-    private String mUrl= "https://via.placeholder.com/500";
+    private String mUrl = "https://via.placeholder.com/500";
     private WebView mWebView;
-    private static final String EXTENSION_PATTERN ="([^\\s]+(\\.(?i)(jpg|png))$)";
-    static List<String> workingImages =new ArrayList<String>();
+    private static final String EXTENSION_PATTERN = "([^\\s]+(\\.(?i)(jpg|png))$)";
+    static List<String> workingImages = new ArrayList<String>();
+    static ArrayList<String> selectedImage = new ArrayList<String>();
 
     //for music
     private Intent serviceIntent;
@@ -77,20 +80,22 @@ public class MainActivity extends AppCompatActivity
 
         try {
             this.getSupportActionBar().hide();   //Remove the action bar
+        } catch (NullPointerException e) {
         }
-        catch (NullPointerException e) {};
+        ;
 
         // add background music
         serviceIntent = new Intent(getApplicationContext(), MyService.class);
-        startService(new Intent(getApplicationContext(),MyService.class));
+        startService(new Intent(getApplicationContext(), MyService.class));
 
     }
-    //get the list of images
-    public ArrayList<GridItem> getList(){
-        ArrayList<GridItem> imgList = new ArrayList<>();
-        Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.not_found);
 
-        for(int i=0;i<20;i++){
+    //get the list of images
+    public ArrayList<GridItem> getList() {
+        ArrayList<GridItem> imgList = new ArrayList<>();
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.not_found);
+
+        for (int i = 0; i < 20; i++) {
             imgList.add(new GridItem(icon));
         }
 
@@ -99,9 +104,9 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onClick(View v){
+    public void onClick(View v) {
 
-        if(v.getId() == R.id.fetch) {
+        if (v.getId() == R.id.fetch) {
             //Get URL
             EditText url = findViewById(R.id.url);
             if (url != null) {
@@ -114,7 +119,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         /* This call inject JavaScript into the page which just finished loading. */
-                        if(!prev_url.equals(url)) {
+                        if (!prev_url.equals(url)) {
                             imgItems.clear();
                             String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
                             mWebView.loadUrl(l_url);
@@ -124,12 +129,28 @@ public class MainActivity extends AppCompatActivity
                 mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
                 mWebView.loadUrl(mUrl);
             }
+        } else {
+
+            String img = workingImages.get(v.getId());
+            if (selectedImage.contains(img)) {
+                ((ImageView) v).setBackground(null);
+                selectedImage.remove(img);
+            } else {
+                selectedImage.add(img);
+                ((ImageView) v).setBackground(getResources().getDrawable(R.drawable.img_select_border));
+                if (selectedImage.size() == 6) {
+                    //Write For Second Activity
+                    Intent intent = new Intent(this, GameActivity.class);
+                    intent.putExtra("selected", selectedImage);
+                    startActivityForResult(intent, 0);
+                    finish();
+                    Toast.makeText(this, "Next Activity", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
-        else if(v.getId() == R.id.temp){
-            Intent intent = new Intent(this, GameActivity.class);
-            startActivity(intent);
-        }
-    }//end of onClick
+    }
+
+    //end of onClick
 
 
     @SuppressLint("HandlerLeak")
