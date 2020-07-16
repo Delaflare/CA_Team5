@@ -42,12 +42,16 @@ public class TMain extends AppCompatActivity
 
     public static int PROGRESS_UPDATE = 1;
     public static int DOWNLOAD_COMPLETED = 2;
+    public  static int count=0;
 
     //for getting urls
     private String mUrl= "https://via.placeholder.com/500";
     private WebView mWebView;
     private static final String EXTENSION_PATTERN ="([^\\s]+(\\.(?i)(jpg|png))$)";
     static List<String> workingImages =new ArrayList<String>();
+
+
+    private  boolean startCanDownload=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,18 +106,7 @@ public class TMain extends AppCompatActivity
                 }
 
             //getting 20 clean URLs and start downloading
-            new Thread(new Runnable(){
-                @Override
-                public void run(){
-                    for(String i: workingImages){
-                        try {
-                            downloadImage(i);
-                            System.out.print("downloading");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }}
-            }).start();
+
         }
     }//end of onClick
 
@@ -122,15 +115,19 @@ public class TMain extends AppCompatActivity
     Handler mainHdl = new Handler() {
         public void handleMessage(@NonNull Message msg) {
         if (msg.what == DOWNLOAD_COMPLETED) {
+            count++;
             ArrayList<GridItem> imgItems = new ArrayList<>();
             imgItems.add(new GridItem((Bitmap) msg.obj));
             gridAdapter.updateImageList(imgItems);
             }
+        if(count==workingImages.size()){
+            startCanDownload=false;
+        }
         }
     };
 
     //Inteface to get URLs
-    public static class MyJavaScriptInterface   //Wai Testing
+    public class MyJavaScriptInterface   //Wai Testing
     {
         public  MyJavaScriptInterface()
         {
@@ -160,7 +157,23 @@ public class TMain extends AppCompatActivity
             }
             this.list = new String[workingImages.size()];
             this.list = workingImages.toArray(list);
+            startCanDownload=true;
 
+            new Thread(new Runnable(){
+                @Override
+                public void run() {
+                    if (startCanDownload) {
+                        for (String i : workingImages) {
+                            try {
+                                downloadImage(i);
+                                System.out.print("downloading");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }).start();
     }}
 
     protected void downloadImage(String target) throws IOException {
