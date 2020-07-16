@@ -37,7 +37,7 @@ public class GridViewAdapter extends ArrayAdapter {
                     this.data.set(i, newImagelist.get(i));
                 }
             }
-           // this.data.addAll(newImagelist);
+
         }else{
             this.data = newImagelist;
         }
