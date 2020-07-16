@@ -11,6 +11,10 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
+import android.app.Activity;
+import android.view.View;
+import java.util.Locale;
+import android.widget.TextView;
 
 import java.util.Random;
 
@@ -37,12 +41,27 @@ public class GameActivity extends AppCompatActivity {
     int prevPos = -1;
     int count = 0;
 
+    //timer test-code
+    private int timerSec = 0;
+    private boolean running;
+    private boolean wasRunning;
+
     private int mGridViewBGColor = Color.parseColor("#FF86A38B");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        if (savedInstanceState != null) {
+            timerSec = savedInstanceState
+                    .getInt("seconds");
+            running = savedInstanceState
+                    .getBoolean("running");
+            wasRunning = savedInstanceState
+                    .getBoolean("wasRunning");
+        }
+        runTimer();
 
         shuffledPos = shuffle(position);
         shuffledImages = shuffleImages(images, shuffledPos);
@@ -54,6 +73,7 @@ public class GameActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 GridAdapter adapter = (GridAdapter)gridView.getAdapter();
+                running = true;
                 if(!isFlipped[i] && click == 0) {
                     isFlipped[i] = true;
                     click++;
@@ -94,13 +114,28 @@ public class GameActivity extends AppCompatActivity {
                         prevPos = -1;
                         currentPos = -1;
                         click = 0;
+                        if (count == 6) {running = false;}
 
+                        final TextView countView
+                        = (TextView)findViewById(
+                        R.id.countMatches);
+                        if (count > 0) {countView.setText(count + "/6 matches");}
                     }
-
-
                 }
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(
+            Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState
+                .putInt("seconds", timerSec);
+        savedInstanceState
+                .putBoolean("running", running);
+        savedInstanceState
+                .putBoolean("wasRunning", wasRunning);
     }
 
     //shuffle position
@@ -148,5 +183,39 @@ public class GameActivity extends AppCompatActivity {
         // Finally, Run the item background color animation
         // This is the grid view item click effect
         transitionDrawable.startTransition(200); // 600 Milliseconds
+    }
+    private void runTimer()
+    {
+        final TextView timeView
+            = (TextView)findViewById(
+            R.id.timer);
+
+        final Handler handler
+                = new Handler();
+
+        handler.post(new Runnable() {
+            @Override
+
+            public void run()
+            {
+                int hours = timerSec / 3600;
+                int minutes = (timerSec % 3600) / 60;
+                int secs = timerSec % 60;
+
+                String time
+                        = String
+                        .format(Locale.getDefault(),
+                                "%d:%02d:%02d", hours,
+                                minutes, secs);
+
+                timeView.setText(time);
+
+                if (running) {
+                    timerSec++;
+                }
+
+                handler.postDelayed(this, 1000);
+            }
+        });
     }
 }
