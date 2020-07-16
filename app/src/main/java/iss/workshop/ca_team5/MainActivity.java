@@ -49,13 +49,13 @@ public class MainActivity extends AppCompatActivity
     public static boolean loadedFlag = false;
     public static String prev_url = "";
     private ArrayList<GridItem> imgItems = new ArrayList<>();
-
+    private ArrayList<String> imgStringList = new ArrayList<>();
     //for getting urls
     private String mUrl = "https://via.placeholder.com/500";
     private WebView mWebView;
     private static final String EXTENSION_PATTERN = "([^\\s]+(\\.(?i)(jpg|png))$)";
     static List<String> workingImages = new ArrayList<String>();
-    static ArrayList<String> selectedImage = new ArrayList<String>();
+    public ArrayList<String> selectedImage = new ArrayList<String>();
 
     //for music
     private Intent serviceIntent;
@@ -83,7 +83,23 @@ public class MainActivity extends AppCompatActivity
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(), "Click i", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Click"+(i+1), Toast.LENGTH_SHORT).show();
+                System.out.println(imgStringList);
+                if(selectedImage.contains(imgStringList.get(i))){
+                    view.setBackground(null);
+                    selectedImage.remove(imgStringList.get(i));
+                }else{
+                    selectedImage.add(imgStringList.get(i));
+                    System.out.println("Selected images are in the below list");
+                    System.out.println(selectedImage);
+                    view.setBackground(getDrawable((R.drawable.img_select_border)));
+                    if(selectedImage.size() == 6){
+                        Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                        intent.putExtra("selected", selectedImage);
+                        startActivityForResult(intent, 0);
+                        finish();
+                    }
+                }
             }
         });
 
@@ -100,16 +116,20 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    //get selected images
+    public List<String> getSelectedImages(View v){
+
+        return null;
+    }
     //get the list of images
     public ArrayList<GridItem> getList() {
+        //.clear();
         ArrayList<GridItem> imgList = new ArrayList<>();
         Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.not_found);
 
         for (int i = 0; i < 20; i++) {
             imgList.add(new GridItem(icon));
         }
-
-
         return imgList;
     }
 
@@ -276,6 +296,7 @@ public class MainActivity extends AppCompatActivity
             //updateProgress(100);
             bitmap = BitmapFactory.decodeByteArray(imgBytes,0,imageLen);
             updateImage(bitmap);
+            imgStringList.add(bitmap.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

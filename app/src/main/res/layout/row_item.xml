@@ -12,6 +12,7 @@
         android:layout_height="130dp"
         android:id="@+id/image_view"
         android:scaleType="centerCrop"
+        android:clickable="true"
         />
 
 
