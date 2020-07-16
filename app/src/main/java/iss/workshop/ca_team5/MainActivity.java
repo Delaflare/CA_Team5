@@ -12,6 +12,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
@@ -78,6 +79,15 @@ public class MainActivity extends AppCompatActivity
         Button btn1 = findViewById(R.id.temp);
         btn1.setOnClickListener(this);
 
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getApplicationContext(), "Click i", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         try {
             this.getSupportActionBar().hide();   //Remove the action bar
         } catch (NullPointerException e) {
@@ -129,7 +139,7 @@ public class MainActivity extends AppCompatActivity
                 mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
                 mWebView.loadUrl(mUrl);
             }
-        } else if (v.getId() == R.id.image_view) {
+        } /*else if (v.getId() == R.id.image_view) {
             String img = workingImages.get(v.getId());
             if (selectedImage.contains(img)) {
                 ((ImageView) v).setBackground(null);
@@ -147,7 +157,7 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-        }else if(v.getId() == R.id.temp){
+        }*/else if(v.getId() == R.id.temp){
             Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
         }

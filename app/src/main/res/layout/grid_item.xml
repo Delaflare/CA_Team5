@@ -8,6 +8,5 @@
         android:id="@+id/grid_item_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:scaleType="centerCrop"
-        android:clickable="true"/>
+        android:scaleType="centerCrop"/>
 </LinearLayout>
