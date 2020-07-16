@@ -14,7 +14,7 @@
             android:id="@+id/images"
             android:layout_width="match_parent"
             android:layout_height="69dp"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:src="@drawable/not_found" />
 
     </RelativeLayout>
 </RelativeLayout>

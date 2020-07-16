@@ -44,6 +44,13 @@ public class MainActivity extends AppCompatActivity
     //Wai Testing
     GridView gridView;
     static List<String> workingImages =new ArrayList<String>();
+    public static   int[] workingImagesArr = {R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,
+            R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,
+            R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,
+            R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,
+            R.drawable.not_found,R.drawable.not_found,R.drawable.not_found,R.drawable.not_found
+    };
+    public static  Bitmap[] downloadedImagesArr={};
     private String mUrl= "https://via.placeholder.com/500";
     private WebView mWebView;
     private ProgressBar mProgressBar;// do we need this
@@ -65,10 +72,12 @@ public class MainActivity extends AppCompatActivity
                         msg.arg1 + "%", Toast.LENGTH_SHORT).show();
             }
             else if (msg.what == DOWNLOAD_COMPLETED) {
-                GridView listView=findViewById(R.id.gridview);
-                ImageView imageView = (ImageView) listView.getChildAt(1);
-                if (imageView != null)
-                    imageView.setImageBitmap((Bitmap) msg.obj);
+                int count=downloadedImagesArr.length;
+                downloadedImagesArr[count+1]=(Bitmap) msg.obj;
+//                GridView listView=findViewById(R.id.gridview);
+//                ImageView imageView = (ImageView) listView.getChildAt(1);
+//                if (imageView != null)
+//                    imageView.setImageBitmap((Bitmap) msg.obj);
             }
         }
     };
@@ -93,10 +102,12 @@ public class MainActivity extends AppCompatActivity
         catch (NullPointerException e) {}
 
         //finding list view
-        GridViewAdapter adapter=new GridViewAdapter(this,R.layout.first_grid);
+
+
         GridView listView=findViewById(R.id.gridview);
         if(listView!=null)
         {
+            FirstGridViewAdapter adapter=new FirstGridViewAdapter(this,downloadedImagesArr,workingImagesArr);
             listView.setAdapter(adapter);
 
         }
@@ -118,12 +129,12 @@ public class MainActivity extends AppCompatActivity
                             /* This call inject JavaScript into the page which just finished loading. */
                             mWebView.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
                             String urls="";
-                            for(String i:workingImages)
-                            {
-                                 urls+=i.toString() +"\n";
-
-                            }
-                            Toast.makeText(MainActivity.this, urls, Toast.LENGTH_LONG).show();
+//                            for(String i:workingImages)
+//                            {
+//                                 urls+=i.toString() +"\n";
+//
+//                            }
+//                            Toast.makeText(MainActivity.this, urls, Toast.LENGTH_LONG).show();
                         }
                         @Override
                         public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error){

@@ -30,7 +30,7 @@
 
     <GridView
         android:id="@+id/gridview"
-        android:numColumns="2"
+        android:numColumns="4"
         android:verticalSpacing="1dp"
         android:background="#e5e5e5"
         android:horizontalSpacing="1dp"
