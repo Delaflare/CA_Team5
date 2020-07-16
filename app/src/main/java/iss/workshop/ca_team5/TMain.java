@@ -43,6 +43,8 @@ public class TMain extends AppCompatActivity
     public static int PROGRESS_UPDATE = 1;
     public static int DOWNLOAD_COMPLETED = 2;
     public  static int count=0;
+    public  static boolean loadedFlag=false;
+    public  static String prev_url="";
 
     //for getting urls
     private String mUrl= "https://via.placeholder.com/500";
@@ -50,7 +52,7 @@ public class TMain extends AppCompatActivity
     private static final String EXTENSION_PATTERN ="([^\\s]+(\\.(?i)(jpg|png))$)";
     static List<String> workingImages =new ArrayList<String>();
 
-
+    private ArrayList<GridItem> imgItems = new ArrayList<>();
     private  boolean startCanDownload=false;
 
     @Override
@@ -75,9 +77,12 @@ public class TMain extends AppCompatActivity
     //get the list of images
     public ArrayList<GridItem> getList(){
           ArrayList<GridItem> imgList = new ArrayList<>();
-//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.afraid);
-//        imgList.add(new GridItem(bitmap));
-//        imgList.add(new GridItem(bitmap));
+          Bitmap icon = BitmapFactory.decodeResource(getResources(),R.drawable.not_found);
+
+          for(int i=0;i<20;i++){
+              imgList.add(new GridItem(icon));
+          }
+
 
         return imgList;
     }
@@ -98,7 +103,11 @@ public class TMain extends AppCompatActivity
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         /* This call inject JavaScript into the page which just finished loading. */
-                        mWebView.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                        if(!prev_url.equals(url)) {
+                            imgItems.clear();
+                            String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
+                            mWebView.loadUrl(l_url);
+                        }
                     }
                 });
                 mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
@@ -116,12 +125,15 @@ public class TMain extends AppCompatActivity
         public void handleMessage(@NonNull Message msg) {
         if (msg.what == DOWNLOAD_COMPLETED) {
             count++;
-            ArrayList<GridItem> imgItems = new ArrayList<>();
+            //ArrayList<GridItem> imgItems = new ArrayList<>();
             imgItems.add(new GridItem((Bitmap) msg.obj));
             gridAdapter.updateImageList(imgItems);
             }
         if(count==workingImages.size()){
+            //gridAdapter.updateImageList(imgItems);
             startCanDownload=false;
+            workingImages.clear();
+            count=0;
         }
         }
     };
@@ -140,7 +152,8 @@ public class TMain extends AppCompatActivity
         }
         @JavascriptInterface
         @SuppressWarnings("unused")
-        public void processHTML(String html) {
+        public void processHTML(String url,String html) {
+            prev_url=url;
             int count = 0;
             // process the html as needed by the app
             Pattern p = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
@@ -150,7 +163,9 @@ public class TMain extends AppCompatActivity
                 Pattern p2 = Pattern.compile(EXTENSION_PATTERN);
                 Matcher img = p2.matcher(srcResult);
                 if (img.find()) {
-                    workingImages.add(srcResult);
+                    if(workingImages.size()<20) {
+                        workingImages.add(srcResult);
+                    }
                     count++;
                 }
                 if (count == 20) break;
