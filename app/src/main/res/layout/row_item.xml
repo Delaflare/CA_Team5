@@ -4,13 +4,15 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="5dp"
     android:gravity="center">
 
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:id="@+id/image_view"/>
+        android:layout_width="130dp"
+        android:layout_height="130dp"
+        android:id="@+id/image_view"
+        android:scaleType="centerCrop"
+        />
 
 
 </LinearLayout>

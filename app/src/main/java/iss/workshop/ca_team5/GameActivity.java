@@ -127,6 +127,25 @@ public class GameActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause()
+    {
+        super.onPause();
+        wasRunning = running;
+        running = false;
+    }
+
+    // If the activity is resumed,
+    // start the stopwatch
+    // again if it was running previously.
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        if (wasRunning) {
+            running = true;
+        }
+    }
+    @Override
     public void onSaveInstanceState(
             Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
