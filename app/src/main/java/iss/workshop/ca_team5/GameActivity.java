@@ -96,7 +96,6 @@ public class GameActivity extends AppCompatActivity {
                                 prevPos = -1;
                                 currentPos = -1;
                                 click = 0;
-
                             }
                         }, 1000);
                         isFlipped[i] = false;
