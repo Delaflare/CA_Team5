@@ -12,10 +12,13 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,22 +40,27 @@ public class MainActivity extends AppCompatActivity
     private GridViewAdapter gridAdapter;
 
     ProgressBar ProBar;
+    ProgressBar ProBar2;
 
     public static int PROGRESS_UPDATE = 1;
     public static int DOWNLOAD_COMPLETED = 2;
-    public  static int count=0;
-    private  boolean startCanDownload=false;
+    public static int count = 0;
+    private boolean startCanDownload = false;
+    public static boolean loadedFlag = false;
+    public static String prev_url = "";
+    private ArrayList<GridItem> imgItems = new ArrayList<>();
 
     //for getting urls
-    private String mUrl= "https://via.placeholder.com/500";
+    private String mUrl = "https://via.placeholder.com/500";
     private WebView mWebView;
-    private static final String EXTENSION_PATTERN ="([^\\s]+(\\.(?i)(jpg|png))$)";
-    static List<String> workingImages =new ArrayList<String>();
+    private static final String EXTENSION_PATTERN = "([^\\s]+(\\.(?i)(jpg|png))$)";
+    static List<String> workingImages = new ArrayList<String>();
+    static ArrayList<String> selectedImage = new ArrayList<String>();
 
     //for music
     private Intent serviceIntent;
 
-
+    public static int downloadedNo = 0;
 
 
     @Override
@@ -71,30 +79,44 @@ public class MainActivity extends AppCompatActivity
         Button btn1 = findViewById(R.id.temp);
         btn1.setOnClickListener(this);
 
+
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Toast.makeText(getApplicationContext(), "Click i", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
         try {
             this.getSupportActionBar().hide();   //Remove the action bar
+        } catch (NullPointerException e) {
         }
-        catch (NullPointerException e) {};
+        ;
 
         // add background music
         serviceIntent = new Intent(getApplicationContext(), MyService.class);
-        startService(new Intent(getApplicationContext(),MyService.class));
+        startService(new Intent(getApplicationContext(), MyService.class));
 
     }
+
     //get the list of images
-    public ArrayList<GridItem> getList(){
+    public ArrayList<GridItem> getList() {
         ArrayList<GridItem> imgList = new ArrayList<>();
-//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.afraid);
-//        imgList.add(new GridItem(bitmap));
-//        imgList.add(new GridItem(bitmap));
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.not_found);
+
+        for (int i = 0; i < 20; i++) {
+            imgList.add(new GridItem(icon));
+        }
+
 
         return imgList;
     }
 
     @Override
-    public void onClick(View v){
+    public void onClick(View v) {
 
-        if(v.getId() == R.id.fetch) {
+        if (v.getId() == R.id.fetch) {
             //Get URL
             EditText url = findViewById(R.id.url);
             if (url != null) {
@@ -107,18 +129,41 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onPageFinished(WebView view, String url) {
                         /* This call inject JavaScript into the page which just finished loading. */
-                        mWebView.loadUrl("javascript:window.HTMLOUT.processHTML('<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');");
+                        if (!prev_url.equals(url)) {
+                            imgItems.clear();
+                            String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
+                            mWebView.loadUrl(l_url);
+                        }
                     }
                 });
                 mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
                 mWebView.loadUrl(mUrl);
             }
-        }
-        else if(v.getId() == R.id.temp){
+        } /*else if (v.getId() == R.id.image_view) {
+            String img = workingImages.get(v.getId());
+            if (selectedImage.contains(img)) {
+                ((ImageView) v).setBackground(null);
+                selectedImage.remove(img);
+            } else {
+                selectedImage.add(img);
+                ((ImageView) v).setBackground(getResources().getDrawable(R.drawable.img_select_border));
+                if (selectedImage.size() == 6) {
+                    //Write For Second Activity
+                    Intent intent = new Intent(this, GameActivity.class);
+                    intent.putExtra("selected", selectedImage);
+                    startActivityForResult(intent, 0);
+                    finish();
+                    Toast.makeText(this, "Next Activity", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+        }*/else if(v.getId() == R.id.temp){
             Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
         }
-    }//end of onClick
+    }
+
+    //end of onClick
 
 
     @SuppressLint("HandlerLeak")
@@ -126,12 +171,15 @@ public class MainActivity extends AppCompatActivity
         public void handleMessage(@NonNull Message msg) {
             if (msg.what == DOWNLOAD_COMPLETED) {
                 count++;
-                ArrayList<GridItem> imgItems = new ArrayList<>();
+                //ArrayList<GridItem> imgItems = new ArrayList<>();
                 imgItems.add(new GridItem((Bitmap) msg.obj));
                 gridAdapter.updateImageList(imgItems);
             }
             if(count==workingImages.size()){
+                //gridAdapter.updateImageList(imgItems);
                 startCanDownload=false;
+                workingImages.clear();
+                count=0;
             }
         }
     };
@@ -150,7 +198,8 @@ public class MainActivity extends AppCompatActivity
         }
         @JavascriptInterface
         @SuppressWarnings("unused")
-        public void processHTML(String html) {
+        public void processHTML(String url,String html) {
+            prev_url=url;
             int count = 0;
             // process the html as needed by the app
             Pattern p = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
@@ -185,6 +234,7 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
             }).start();
+            downloadedNo = 0;
         }}
 
     protected void downloadImage(String target) throws IOException {
@@ -194,7 +244,8 @@ public class MainActivity extends AppCompatActivity
         Bitmap bitmap = null;
         int lastPercent = 0;
         byte[] imgBytes;
-        ProBar = (ProgressBar) findViewById(R.id.ProBar);
+
+        ProBar = (ProgressBar) findViewById(R.id.ProBar1);
 
         try {
             URL url = new URL(target);

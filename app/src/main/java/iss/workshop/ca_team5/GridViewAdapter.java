@@ -30,7 +30,14 @@ public class GridViewAdapter extends ArrayAdapter {
 
     public void updateImageList(ArrayList<GridItem> newImagelist){
         if(this.data != null){
-            this.data.addAll(newImagelist);
+            if(this.data.size()==20)
+            {
+                for(int i=0;i<newImagelist.size();i++)
+                {
+                    this.data.set(i, newImagelist.get(i));
+                }
+            }
+
         }else{
             this.data = newImagelist;
         }
