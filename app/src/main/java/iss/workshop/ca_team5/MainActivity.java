@@ -24,6 +24,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -164,6 +166,12 @@ public class MainActivity extends AppCompatActivity
                                 imgItems.clear();
                                 String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
                                 mWebView.loadUrl(l_url);
+
+                                //set probar visible after download start
+                                textView = findViewById(R.id.status);
+                                ProBar = findViewById(R.id.ProBar);
+                                textView.setVisibility(View.VISIBLE);
+                                ProBar.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -175,25 +183,11 @@ public class MainActivity extends AppCompatActivity
                     ProBar = findViewById(R.id.ProBar);
                     textView.setVisibility(View.VISIBLE);
                     ProBar.setVisibility(View.VISIBLE);
+                    TextView textView1 = findViewById(R.id.info);
+                    textView1.setVisibility(View.VISIBLE);
                 }
                 break;
-//            case R.id.image_view:
-//                String img = workingImages.get(v.getId());
-//                if (selectedImage.contains(img)) {
-//                    ((ImageView) v).setBackground(null);
-//                    selectedImage.remove(img);
-//                } else {
-//                    selectedImage.add(img);
-//                    ((ImageView) v).setBackground(getResources().getDrawable(R.drawable.img_select_border));
-//                    if (selectedImage.size() == 6) {
-//                        //Write For Second Activity
-//                        Intent intent = new Intent(this, GameActivity.class);
-//                        intent.putExtra("selected", selectedImage);
-//                        startActivityForResult(intent, 0);
-//                        finish();
-//                        Toast.makeText(this, "Next Activity", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
+
             case R.id.tag_food:
                 url.setText("https://stocksnap.io/search/food");
                 break;
@@ -263,6 +257,7 @@ public class MainActivity extends AppCompatActivity
             startCanDownload=true;
 
 
+
             //getting 20 clean URLs and start downloading
             new Thread(new Runnable(){
                 @Override
@@ -276,7 +271,6 @@ public class MainActivity extends AppCompatActivity
                                 downloadImage(i);
                                 c = c +1;// ian code
                                 textView.setText( c + "/20 has been downloaded");// ian
-                                //int percent = Math.round(c * 100 / 20);
                                 ProBar.setProgress(c);
                             } catch (IOException e) {
                                 e.printStackTrace();
