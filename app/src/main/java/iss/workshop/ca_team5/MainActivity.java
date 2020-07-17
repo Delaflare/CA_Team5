@@ -76,9 +76,6 @@ public class MainActivity extends AppCompatActivity
         //fetch
         Button btn = findViewById(R.id.fetch);
         btn.setOnClickListener(this);
-        //Temp go to game view
-        Button btn1 = findViewById(R.id.temp);
-        btn1.setOnClickListener(this);
         //set tag buttons
         Button btn_f = findViewById(R.id.tag_food);
         btn_f.setOnClickListener(this);
@@ -93,12 +90,13 @@ public class MainActivity extends AppCompatActivity
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(), "Click"+(i+1), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Click"+(i+1), Toast.LENGTH_SHORT).show();
                 System.out.println(imgStringList);
                 if(selectedImage.contains(imgStringList.get(i))){
                     view.setBackground(null);
                     selectedImage.remove(imgStringList.get(i));
-                }else{
+                }
+                else{
                     selectedImage.add(imgStringList.get(i));
                     System.out.println("Selected images are in the below list");
                     System.out.println(selectedImage);
@@ -106,8 +104,9 @@ public class MainActivity extends AppCompatActivity
                     if(selectedImage.size() == 6){
                         Intent intent = new Intent(MainActivity.this, GameActivity.class);
                         intent.putExtra("selected", selectedImage);
-                        startActivityForResult(intent, 0);
-                        finish();
+                        //startActivityForResult(intent, 0);
+                        startActivity(intent);
+                        //finish();
                     }
                 }
             }
@@ -135,8 +134,8 @@ public class MainActivity extends AppCompatActivity
     public ArrayList<GridItem> getList() {
         //.clear();
         ArrayList<GridItem> imgList = new ArrayList<>();
-        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.not_found);
-
+        //created transparent icon
+        Bitmap icon = Bitmap.createBitmap(10,10, Bitmap.Config.ALPHA_8);
         for (int i = 0; i < 20; i++) {
             imgList.add(new GridItem(icon));
         }
@@ -176,29 +175,23 @@ public class MainActivity extends AppCompatActivity
                     ProBar.setVisibility(View.VISIBLE);
                 }
                 break;
-             /*else if (v.getId() == R.id.image_view) {
-            String img = workingImages.get(v.getId());
-            if (selectedImage.contains(img)) {
-                ((ImageView) v).setBackground(null);
-                selectedImage.remove(img);
-            } else {
-                selectedImage.add(img);
-                ((ImageView) v).setBackground(getResources().getDrawable(R.drawable.img_select_border));
-                if (selectedImage.size() == 6) {
-                    //Write For Second Activity
-                    Intent intent = new Intent(this, GameActivity.class);
-                    intent.putExtra("selected", selectedImage);
-                    startActivityForResult(intent, 0);
-                    finish();
-                    Toast.makeText(this, "Next Activity", Toast.LENGTH_SHORT).show();
-                }
-            }
-
-        }*/
-            case R.id.temp:
-            Intent intent = new Intent(this, GameActivity.class);
-            startActivity(intent);
-            break;
+//            case R.id.image_view:
+//                String img = workingImages.get(v.getId());
+//                if (selectedImage.contains(img)) {
+//                    ((ImageView) v).setBackground(null);
+//                    selectedImage.remove(img);
+//                } else {
+//                    selectedImage.add(img);
+//                    ((ImageView) v).setBackground(getResources().getDrawable(R.drawable.img_select_border));
+//                    if (selectedImage.size() == 6) {
+//                        //Write For Second Activity
+//                        Intent intent = new Intent(this, GameActivity.class);
+//                        intent.putExtra("selected", selectedImage);
+//                        startActivityForResult(intent, 0);
+//                        finish();
+//                        Toast.makeText(this, "Next Activity", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
             case R.id.tag_food:
                 url.setText("https://stocksnap.io/search/food");
                 break;
@@ -212,9 +205,7 @@ public class MainActivity extends AppCompatActivity
                 url.setText("https://stocksnap.io/search/people");
                 break;
         }
-    }
-
-    //end of onClick
+    }//end of onClick
 
 
     @SuppressLint("HandlerLeak")

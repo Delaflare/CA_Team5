@@ -28,14 +28,6 @@
         android:textSize="20sp"
         android:layout_alignParentRight="true"
         />
-    <Button
-        android:id="@+id/temp"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="Temp Game"
-        android:textSize="20sp"
-        android:layout_above="@id/ProBar"
-        />
 
     <GridView
         android:id="@+id/gridView"
@@ -80,7 +72,6 @@
         android:layout_marginTop="687dp"
         android:layout_marginBottom="5dp"
         android:gravity="center"
-        android:text="@string/download"
         android:textSize="20sp"
         android:visibility="visible"
         />
