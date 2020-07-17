@@ -1,12 +1,14 @@
 package iss.workshop.ca_team5;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
@@ -24,9 +26,15 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -56,7 +64,8 @@ public class MainActivity extends AppCompatActivity
     private WebView mWebView;
     private static final String EXTENSION_PATTERN = "([^\\s]+(\\.(?i)(jpg|png))$)";
     static List<String> workingImages = new ArrayList<String>();
-    public ArrayList<String> selectedImage = new ArrayList<String>();
+    //public ArrayList<String> selectedImage = new ArrayList<String>();
+    public ArrayList<GridItem> selectedImage = new ArrayList<GridItem>();
 
     //for music
     private Intent serviceIntent;
@@ -90,23 +99,22 @@ public class MainActivity extends AppCompatActivity
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //Toast.makeText(getApplicationContext(), "Click"+(i+1), Toast.LENGTH_SHORT).show();
-                System.out.println(imgStringList);
-                if(selectedImage.contains(imgStringList.get(i))){
-                    view.setBackground(null);
-                    selectedImage.remove(imgStringList.get(i));
-                }
-                else{
-                    selectedImage.add(imgStringList.get(i));
-                    System.out.println("Selected images are in the below list");
-                    System.out.println(selectedImage);
-                    view.setBackground(getDrawable((R.drawable.img_select_border)));
-                    if(selectedImage.size() == 6){
-                        Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                        intent.putExtra("selected", selectedImage);
-                        //startActivityForResult(intent, 0);
-                        startActivity(intent);
-                        //finish();
+                if(!imgItems.isEmpty()){
+                    if(selectedImage.contains(imgItems.get(i))){
+                        view.setBackground(null);
+                        selectedImage.remove(imgItems.get(i));
+                    }
+                    else{
+                        selectedImage.add(imgItems.get(i));
+                        System.out.println("Selected images are in the below list");
+                        System.out.println(selectedImage);
+                        view.setBackground(getDrawable((R.drawable.img_select_border)));
+                        if(selectedImage.size() == 6){
+                            Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                            saveSelectedImages();
+                            startActivity(intent);
+                            //finish();
+                        }
                     }
                 }
             }
@@ -181,6 +189,12 @@ public class MainActivity extends AppCompatActivity
                                 imgItems.clear();
                                 String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
                                 mWebView.loadUrl(l_url);
+
+                                //set probar visible after download start
+                                textView = findViewById(R.id.status);
+                                ProBar = findViewById(R.id.ProBar);
+                                textView.setVisibility(View.VISIBLE);
+                                ProBar.setVisibility(View.VISIBLE);
                             }
                         }
                     });
@@ -192,25 +206,11 @@ public class MainActivity extends AppCompatActivity
                     ProBar = findViewById(R.id.ProBar);
                     textView.setVisibility(View.VISIBLE);
                     ProBar.setVisibility(View.VISIBLE);
+                    TextView textView1 = findViewById(R.id.info);
+                    textView1.setVisibility(View.VISIBLE);
                 }
                 break;
-//            case R.id.image_view:
-//                String img = workingImages.get(v.getId());
-//                if (selectedImage.contains(img)) {
-//                    ((ImageView) v).setBackground(null);
-//                    selectedImage.remove(img);
-//                } else {
-//                    selectedImage.add(img);
-//                    ((ImageView) v).setBackground(getResources().getDrawable(R.drawable.img_select_border));
-//                    if (selectedImage.size() == 6) {
-//                        //Write For Second Activity
-//                        Intent intent = new Intent(this, GameActivity.class);
-//                        intent.putExtra("selected", selectedImage);
-//                        startActivityForResult(intent, 0);
-//                        finish();
-//                        Toast.makeText(this, "Next Activity", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
+
             case R.id.tag_food:
                 url.setText("https://stocksnap.io/search/food");
                 break;
@@ -373,4 +373,20 @@ public class MainActivity extends AppCompatActivity
         msg.obj = bitmap;
         mainHdl.sendMessage(msg);
     }
+
+    protected void saveSelectedImages(){
+        for(int i = 0; i < 6; i++){
+            String name = "image"+i;
+            FileOutputStream fileOutputStream;
+            try{
+                fileOutputStream = getApplicationContext().openFileOutput(name, Context.MODE_PRIVATE);
+                selectedImage.get(i).getImage().compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+                fileOutputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
 }//end of all

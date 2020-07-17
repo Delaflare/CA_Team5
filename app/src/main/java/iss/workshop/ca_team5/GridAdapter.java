@@ -3,24 +3,26 @@ package iss.workshop.ca_team5;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 
 public class GridAdapter extends BaseAdapter {
 
     private Context context;
     private LayoutInflater inflater;
-    private int[] images;
+    private Bitmap[] images;
 
-    public GridAdapter(Context c, int[] images){
+    public GridAdapter(Context c, Bitmap[] images){
         context =c;
         this.images = images;
     }
-
     @Override
     public int getCount() {
         return images.length ;
@@ -45,11 +47,11 @@ public class GridAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.row_item, null);
         }
         ImageView imageView = convertView.findViewById(R.id.image_view);
-        imageView.setImageResource(images[position]);
+        imageView.setImageBitmap(images[position]);
         return convertView;
     }
 
-    public void flipImage(int position, int image){
+    public void flipImage(int position, Bitmap image){
         if(position >= 0 && position < images.length){
             images[position] = image;
             notifyDataSetChanged();
@@ -58,8 +60,8 @@ public class GridAdapter extends BaseAdapter {
 
     public void flipBack(int position, int prevPosition){
         if(position >= 0 && position < images.length){
-            images[position] = R.drawable.hidden1;
-            images[prevPosition] = R.drawable.hidden1;
+            images[position] = BitmapFactory.decodeResource(context.getResources(), R.drawable.hidden1);//change to hidden
+            images[prevPosition] = BitmapFactory.decodeResource(context.getResources(), R.drawable.hidden1);//change to hidden
             notifyDataSetChanged();
         }
     }
