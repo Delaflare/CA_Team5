@@ -1,13 +1,11 @@
 package iss.workshop.ca_team5;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.res.ResourcesCompat;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -16,9 +14,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 import android.widget.TextView;
@@ -30,18 +26,11 @@ public class GameActivity extends AppCompatActivity {
     GridView gridView;
     ArrayList<GridItem> gameImage = new ArrayList<>();
 
-
-    //TODO : to be replace with 6 selected images
-    int[] images = {R.drawable.hug, R.drawable.laugh, R.drawable.peep, R.drawable.snore,
-            R.drawable.stop, R.drawable.tired,R.drawable.hug, R.drawable.laugh, R.drawable.peep, R.drawable.snore,
-            R.drawable.stop, R.drawable.tired};
-
     int[] position ={0,1,2,3,4,5,0,1,2,3,4,5};
-
     Bitmap[] shuffledImages;
     int[] shuffledPos;
-
     boolean[] isFlipped ={false,false,false,false,false,false,false,false,false,false,false,false};
+
     int click = 0;
     int currentPos = -1;
     int prevPos = -1;
@@ -53,17 +42,17 @@ public class GameActivity extends AppCompatActivity {
     private boolean running;
     private boolean wasRunning;
 
-    public int DOWNLOAD_COMPLETED = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        loadGameImage();
+        loadSelectedImage(); //retrieve save selected images
+        getGameImages(); //duplicate the gameImages
 
-        getGameImages();
-        System.out.println(gameImage.size());
+        //shuffled images
+        shuffledPos = shuffle(position);
+        shuffledImages = shuffleImages();
 
         if (savedInstanceState != null) {
             timerSec = savedInstanceState
@@ -75,13 +64,12 @@ public class GameActivity extends AppCompatActivity {
         }
         runTimer();
 
-        shuffledPos = shuffle(position);
-        shuffledImages = shuffleImages();
-
         gridView = findViewById(R.id.grid_view);
+        //hidden images
         Bitmap hidden1 = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.hidden1);
         Bitmap[] hidden = {hidden1, hidden1, hidden1,hidden1,hidden1,
                 hidden1,hidden1,hidden1,hidden1,hidden1,hidden1,hidden1};
+
         GridAdapter adapter = new GridAdapter(this, hidden);
         gridView.setAdapter(adapter);
 
@@ -97,12 +85,10 @@ public class GameActivity extends AppCompatActivity {
                     adapter.flipImage(i, shuffledImages[i]);
                 }
                 if(!isFlipped[i] && click == 1){
-
                     if(!isMatched(prevPos,i)){
                         click++;
                         currentPos = i;
                         adapter.flipImage(i, shuffledImages[i]);
-                        //adapter.flipBack(currentPos, prevPos);
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -112,7 +98,6 @@ public class GameActivity extends AppCompatActivity {
                                 prevPos = -1;
                                 currentPos = -1;
                                 click = 0;
-
                             }
                         }, 500);
                         isFlipped[i] = false;
@@ -197,7 +182,7 @@ public class GameActivity extends AppCompatActivity {
 
     //shuffle images based on shuffled position
     public Bitmap[] shuffleImages(){
-        int n = images.length;
+        int n = gameImage.size();
         Bitmap[] shuffledImages = new Bitmap[n];
         for(int i = 0; i<n;i++){
             shuffledImages[i]=gameImage.get(shuffledPos[i]).getImage();
@@ -276,7 +261,8 @@ public class GameActivity extends AppCompatActivity {
         builder.show();
     }
 
-    public void loadGameImage(){
+    //load game images from safe file
+    public void loadSelectedImage(){
         for(int i = 0; i < 6; i++) {
             String name = "image" + i;
             FileInputStream fileInputStream;
@@ -292,6 +278,7 @@ public class GameActivity extends AppCompatActivity {
         }
     }
 
+    //to duplicate game images
     protected void getGameImages(){
         for(int i=0; i < 6; i++){
            gameImage.add(gameImage.get(i));

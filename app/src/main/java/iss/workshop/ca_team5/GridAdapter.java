@@ -60,8 +60,8 @@ public class GridAdapter extends BaseAdapter {
 
     public void flipBack(int position, int prevPosition){
         if(position >= 0 && position < images.length){
-            images[position] = BitmapFactory.decodeResource(context.getResources(), R.drawable.hidden1);//change to hidden
-            images[prevPosition] = BitmapFactory.decodeResource(context.getResources(), R.drawable.hidden1);//change to hidden
+            images[position] = BitmapFactory.decodeResource(context.getResources(), R.drawable.hidden1);
+            images[prevPosition] = BitmapFactory.decodeResource(context.getResources(), R.drawable.hidden1);
             notifyDataSetChanged();
         }
     }
