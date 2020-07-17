@@ -259,8 +259,8 @@ public class MainActivity extends AppCompatActivity
                                 downloadImage(i);
                                 c = c +1;// ian code
                                 textView.setText( c + "/20 has been downloaded");// ian
-                                int percent = Math.round(c * 100 / 20);
-                                ProBar.setProgress(percent);
+                                //int percent = Math.round(c * 100 / 20);
+                                ProBar.setProgress(c);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

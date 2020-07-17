@@ -24,15 +24,16 @@ public class MyService extends Service {
     public void onCreate()
     {
         Toast.makeText(this, "Service Created", Toast.LENGTH_SHORT).show();
+        player = MediaPlayer.create(this, R.raw.over_the_rainbow);
+        player.start();
+        player.setLooping(true);
 
     }
 
     public void onForeGroundService(Intent intent, int startId)
     {
         Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
-        player = MediaPlayer.create(this, R.raw.over_the_rainbow);
-        player.start();
-        player.setLooping(true);
+
     }
     public void onDestory()
     {
