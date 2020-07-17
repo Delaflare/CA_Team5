@@ -151,9 +151,28 @@ public class MainActivity extends AppCompatActivity
                 if (url != null) {
                     mUrl = url.getText().toString();
                     //Get Images from Website
+
                     mWebView = findViewById(R.id.web_view);
                     WebSettings webSettings = mWebView.getSettings();
                     webSettings.setJavaScriptEnabled(true);
+                    //stop current download
+                    if(!((completed==0 || prev_url.isEmpty())  || completed==20 || prev_url.equals(url))) // Start//finish//same link
+                    {
+                        startCanDownload=false;
+                        Message msg1=new Message();
+                        msg1.what=STOP_DOWNLOAD;
+                        hdl.sendMessage(msg1);
+                        try {
+                            Thread.sleep(500);
+                            ht.quit(); // stopping thread t1
+
+                           // Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                       workingImages.clear();
+                    }
                     mWebView.setWebViewClient(new WebViewClient() {
                         @Override
                         public void onPageFinished(WebView view, String url) {
@@ -167,7 +186,7 @@ public class MainActivity extends AppCompatActivity
                     });
                     mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
                     mWebView.loadUrl(mUrl);
-
+                    doingRepeat();
                     //set probar visible
                     textView = findViewById(R.id.status);
                     ProBar = findViewById(R.id.ProBar);
@@ -204,6 +223,8 @@ public class MainActivity extends AppCompatActivity
             case R.id.tag_ppl:
                 url.setText("https://stocksnap.io/search/people");
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + v.getId());
         }
     }//end of onClick
 
@@ -229,19 +250,19 @@ public class MainActivity extends AppCompatActivity
     //Inteface to get URLs
     public class MyJavaScriptInterface   //Wai Testing
     {
-        public  MyJavaScriptInterface()
-        {
+        public MyJavaScriptInterface() {
         }
-        private  String[] list;
 
-        public String[] getList()
-        {
+        private String[] list;
+
+        public String[] getList() {
             return list;
         }
+
         @JavascriptInterface
         @SuppressWarnings("unused")
-        public void processHTML(String url,String html) {
-            prev_url=url;
+        public void processHTML(String url, String html) {
+            prev_url = url;
             int count = 0;
             // process the html as needed by the app
             Pattern p = Pattern.compile("<img[^>]+src\\s*=\\s*['\"]([^'\"]+)['\"][^>]*>");
@@ -258,33 +279,60 @@ public class MainActivity extends AppCompatActivity
             }
             this.list = new String[workingImages.size()];
             this.list = workingImages.toArray(list);
-            startCanDownload=true;
+            startCanDownload = true;
+            Message msg1=new Message();
+            msg1.what=START_DOWNLOAD;
+            if(hdl!=null)
+            hdl.sendMessage(msg1);
 
 
-            //getting 20 clean URLs and start downloading
-            new Thread(new Runnable(){
-                @Override
-                public void run() {
-                    ProBar = findViewById(R.id.ProBar);// ian code
-                    textView = findViewById(R.id.status);
-                    int c = 0;// ian code
-                    if (startCanDownload) {
-                        for (String i : workingImages) {
-                            try {
-                                downloadImage(i);
-                                c = c +1;// ian code
-                                textView.setText( c + "/20 has been downloaded");// ian
-                                //int percent = Math.round(c * 100 / 20);
-                                ProBar.setProgress(c);
-                            } catch (IOException e) {
-                                e.printStackTrace();
+
+        }
+    }
+
+    protected  void doingRepeat()
+    {
+        //getting 20 clean URLs and start downloading
+        ht = new HandlerThread("thread!");
+        ht.start();
+
+        hdl=new Handler(ht.getLooper()) {
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                if (hdl != null) {
+                    try {
+                        super.handleMessage(msg);
+                        ProBar = findViewById(R.id.ProBar);// ian code
+                        textView = findViewById(R.id.status);
+                        completed = 0;// ian code
+                        if (msg.what == START_DOWNLOAD) {
+                            if (hdl != null && workingImages != null && workingImages.size() > 0) {
+                                for(Iterator<String> wk = workingImages.iterator(); wk.hasNext();){
+                               // for (String i : workingImages) {
+                                    String tt=wk.next();
+                                    downloadImage(tt);
+                                    //Thread.sleep(1000);
+                                    completed++;// ian code
+                                    textView.setText(completed + "/20 has been downloaded");// ian
+                                    //int percent = Math.round(c * 100 / 20);
+                                    ProBar.setProgress(completed);
+                                }
+                            } else {
+                                ht.quitSafely();
                             }
                         }
+                        downloadedNo = 0;
+                    } catch (java.util.ConcurrentModificationException exception) {
+                        // Catch ConcurrentModificationExceptions.
+                         exception.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
-            }).start();
-            downloadedNo = 0;
-        }}
+            }
+        };
+
+    }
 
     protected void downloadImage(String target) throws IOException {
         int imageLen = 0;
