@@ -18,6 +18,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -40,7 +41,7 @@ public class MainActivity extends AppCompatActivity
     private GridViewAdapter gridAdapter;
 
     ProgressBar ProBar;
-    ProgressBar ProBar2;
+    TextView textView;
 
     public static int PROGRESS_UPDATE = 1;
     public static int DOWNLOAD_COMPLETED = 2;
@@ -158,6 +159,12 @@ public class MainActivity extends AppCompatActivity
                 });
                 mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
                 mWebView.loadUrl(mUrl);
+
+                //set probar visible
+                textView = findViewById(R.id.status);
+                ProBar = findViewById(R.id.ProBar);
+                textView.setVisibility(View.VISIBLE);
+                ProBar.setVisibility(View.VISIBLE);
             }
         } /*else if (v.getId() == R.id.image_view) {
             String img = workingImages.get(v.getId());
@@ -238,15 +245,22 @@ public class MainActivity extends AppCompatActivity
             this.list = workingImages.toArray(list);
             startCanDownload=true;
 
+
             //getting 20 clean URLs and start downloading
             new Thread(new Runnable(){
                 @Override
                 public void run() {
+                    ProBar = findViewById(R.id.ProBar);// ian code
+                    textView = findViewById(R.id.status);
+                    int c = 0;// ian code
                     if (startCanDownload) {
                         for (String i : workingImages) {
                             try {
                                 downloadImage(i);
-                                System.out.print("downloading");
+                                c = c +1;// ian code
+                                textView.setText( c + "/20 has been downloaded");// ian
+                                int percent = Math.round(c * 100 / 20);
+                                ProBar.setProgress(percent);
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }
@@ -265,7 +279,6 @@ public class MainActivity extends AppCompatActivity
         int lastPercent = 0;
         byte[] imgBytes;
 
-        ProBar = (ProgressBar) findViewById(R.id.ProBar1);
 
         try {
             URL url = new URL(target);
@@ -282,18 +295,8 @@ public class MainActivity extends AppCompatActivity
             while ((readLen = bufIn.read(data)) != -1) {
                 System.arraycopy(data, 0, imgBytes, totalSoFar, readLen);
                 totalSoFar += readLen;
-
-                int percent = Math.round(totalSoFar * 100 / imageLen);
-                if (percent - lastPercent >= 10) {
-                    // updateProgress(percent);
-                    lastPercent = percent;
-                    ProBar.setProgress(lastPercent);
-                }
             }
 
-            ProBar.setProgress(100);
-
-            //updateProgress(100);
             bitmap = BitmapFactory.decodeByteArray(imgBytes,0,imageLen);
             updateImage(bitmap);
             imgStringList.add(bitmap.toString());
@@ -302,7 +305,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
     protected  void updateImage(Bitmap bitmap) {
-
         Message msg = new Message();
         msg.what = DOWNLOAD_COMPLETED;
         msg.obj = bitmap;
