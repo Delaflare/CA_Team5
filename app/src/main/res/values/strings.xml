@@ -6,4 +6,9 @@
     <string name="download">Download</string>
     <string name="matches">0/6 match count</string>
     <string name="timer">0:00:00</string>
+    <string name="tag1">food</string>
+    <string name="tag2">love</string>
+    <string name="tag3">business</string>
+    <string name="trend">"Popular Tags: "</string>
+    <string name="tag4">People</string>
 </resources>

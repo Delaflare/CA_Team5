@@ -58,8 +58,8 @@ public class GridAdapter extends BaseAdapter {
 
     public void flipBack(int position, int prevPosition){
         if(position >= 0 && position < images.length){
-            images[position] = R.drawable.hidden;
-            images[prevPosition] = R.drawable.hidden;
+            images[position] = R.drawable.hidden1;
+            images[prevPosition] = R.drawable.hidden1;
             notifyDataSetChanged();
         }
     }

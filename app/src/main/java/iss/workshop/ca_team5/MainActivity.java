@@ -79,6 +79,15 @@ public class MainActivity extends AppCompatActivity
         //Temp go to game view
         Button btn1 = findViewById(R.id.temp);
         btn1.setOnClickListener(this);
+        //set tag buttons
+        Button btn_f = findViewById(R.id.tag_food);
+        btn_f.setOnClickListener(this);
+        Button btn_l = findViewById(R.id.tag_love);
+        btn_l.setOnClickListener(this);
+        Button btn_b = findViewById(R.id.tag_biz);
+        btn_b.setOnClickListener(this);
+        Button btn_p = findViewById(R.id.tag_ppl);
+        btn_p.setOnClickListener(this);
 
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -136,37 +145,38 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-
-        if (v.getId() == R.id.fetch) {
-            //Get URL
-            EditText url = findViewById(R.id.url);
-            if (url != null) {
-                mUrl = url.getText().toString();
-                //Get Images from Website
-                mWebView = findViewById(R.id.web_view);
-                WebSettings webSettings = mWebView.getSettings();
-                webSettings.setJavaScriptEnabled(true);
-                mWebView.setWebViewClient(new WebViewClient() {
-                    @Override
-                    public void onPageFinished(WebView view, String url) {
-                        /* This call inject JavaScript into the page which just finished loading. */
-                        if (!prev_url.equals(url)) {
-                            imgItems.clear();
-                            String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
-                            mWebView.loadUrl(l_url);
+        EditText url = findViewById(R.id.url);
+        switch(v.getId()) {
+            case R.id.fetch:
+                //Get URL
+                if (url != null) {
+                    mUrl = url.getText().toString();
+                    //Get Images from Website
+                    mWebView = findViewById(R.id.web_view);
+                    WebSettings webSettings = mWebView.getSettings();
+                    webSettings.setJavaScriptEnabled(true);
+                    mWebView.setWebViewClient(new WebViewClient() {
+                        @Override
+                        public void onPageFinished(WebView view, String url) {
+                            /* This call inject JavaScript into the page which just finished loading. */
+                            if (!prev_url.equals(url)) {
+                                imgItems.clear();
+                                String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
+                                mWebView.loadUrl(l_url);
+                            }
                         }
-                    }
-                });
-                mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
-                mWebView.loadUrl(mUrl);
+                    });
+                    mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+                    mWebView.loadUrl(mUrl);
 
-                //set probar visible
-                textView = findViewById(R.id.status);
-                ProBar = findViewById(R.id.ProBar);
-                textView.setVisibility(View.VISIBLE);
-                ProBar.setVisibility(View.VISIBLE);
-            }
-        } /*else if (v.getId() == R.id.image_view) {
+                    //set probar visible
+                    textView = findViewById(R.id.status);
+                    ProBar = findViewById(R.id.ProBar);
+                    textView.setVisibility(View.VISIBLE);
+                    ProBar.setVisibility(View.VISIBLE);
+                }
+                break;
+             /*else if (v.getId() == R.id.image_view) {
             String img = workingImages.get(v.getId());
             if (selectedImage.contains(img)) {
                 ((ImageView) v).setBackground(null);
@@ -184,9 +194,23 @@ public class MainActivity extends AppCompatActivity
                 }
             }
 
-        }*/else if(v.getId() == R.id.temp){
+        }*/
+            case R.id.temp:
             Intent intent = new Intent(this, GameActivity.class);
             startActivity(intent);
+            break;
+            case R.id.tag_food:
+                url.setText("https://stocksnap.io/search/food");
+                break;
+            case R.id.tag_love:
+                url.setText("https://stocksnap.io/search/love");
+                break;
+            case R.id.tag_biz:
+                url.setText("https://stocksnap.io/search/business");
+                break;
+            case R.id.tag_ppl:
+                url.setText("https://stocksnap.io/search/people");
+                break;
         }
     }
 

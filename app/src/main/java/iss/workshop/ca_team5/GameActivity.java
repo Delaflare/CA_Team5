@@ -32,9 +32,8 @@ public class GameActivity extends AppCompatActivity {
             R.drawable.stop, R.drawable.tired,R.drawable.hug, R.drawable.laugh, R.drawable.peep, R.drawable.snore,
             R.drawable.stop, R.drawable.tired};
     //
-    int[] hidden = {R.drawable.hidden, R.drawable.hidden, R.drawable.hidden, R.drawable.hidden,
-            R.drawable.hidden, R.drawable.hidden,R.drawable.hidden, R.drawable.hidden, R.drawable.hidden,R.drawable.hidden,
-            R.drawable.hidden, R.drawable.hidden};
+    int[] hidden = {R.drawable.hidden1, R.drawable.hidden1, R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,
+            R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1};
     int[] position ={0,1,2,3,4,5,0,1,2,3,4,5};
 
     int[] shuffledImages;
