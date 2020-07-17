@@ -92,21 +92,23 @@ public class MainActivity extends AppCompatActivity
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //Toast.makeText(getApplicationContext(), "Click"+(i+1), Toast.LENGTH_SHORT).show();
                 System.out.println(imgStringList);
-                if(selectedImage.contains(imgStringList.get(i))){
-                    view.setBackground(null);
-                    selectedImage.remove(imgStringList.get(i));
-                }
-                else{
-                    selectedImage.add(imgStringList.get(i));
-                    System.out.println("Selected images are in the below list");
-                    System.out.println(selectedImage);
-                    view.setBackground(getDrawable((R.drawable.img_select_border)));
-                    if(selectedImage.size() == 6){
-                        Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                        intent.putExtra("selected", selectedImage);
-                        //startActivityForResult(intent, 0);
-                        startActivity(intent);
-                        //finish();
+                if(!imgStringList.isEmpty()){
+                    if(selectedImage.contains(imgStringList.get(i))){
+                        view.setBackground(null);
+                        selectedImage.remove(imgStringList.get(i));
+                    }
+                    else{
+                        selectedImage.add(imgStringList.get(i));
+                        System.out.println("Selected images are in the below list");
+                        System.out.println(selectedImage);
+                        view.setBackground(getDrawable((R.drawable.img_select_border)));
+                        if(selectedImage.size() == 6){
+                            Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                            intent.putExtra("selected", selectedImage);
+                            //startActivityForResult(intent, 0);
+                            startActivity(intent);
+                            //finish();
+                        }
                     }
                 }
             }
