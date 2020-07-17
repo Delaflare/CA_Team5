@@ -1,23 +1,25 @@
 package iss.workshop.ca_team5;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.TransitionDrawable;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Locale;
 import android.widget.TextView;
 
@@ -26,17 +28,17 @@ import java.util.Random;
 public class GameActivity extends AppCompatActivity {
 
     GridView gridView;
+    ArrayList<GridItem> gameImage = new ArrayList<>();
+
 
     //TODO : to be replace with 6 selected images
     int[] images = {R.drawable.hug, R.drawable.laugh, R.drawable.peep, R.drawable.snore,
             R.drawable.stop, R.drawable.tired,R.drawable.hug, R.drawable.laugh, R.drawable.peep, R.drawable.snore,
             R.drawable.stop, R.drawable.tired};
-    //
-    int[] hidden = {R.drawable.hidden1, R.drawable.hidden1, R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,
-            R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1,R.drawable.hidden1};
+
     int[] position ={0,1,2,3,4,5,0,1,2,3,4,5};
 
-    int[] shuffledImages;
+    Bitmap[] shuffledImages;
     int[] shuffledPos;
 
     boolean[] isFlipped ={false,false,false,false,false,false,false,false,false,false,false,false};
@@ -51,12 +53,17 @@ public class GameActivity extends AppCompatActivity {
     private boolean running;
     private boolean wasRunning;
 
-    private int mGridViewBGColor = Color.parseColor("#FF86A38B");
+    public int DOWNLOAD_COMPLETED = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+
+        loadGameImage();
+
+        getGameImages();
+        System.out.println(gameImage.size());
 
         if (savedInstanceState != null) {
             timerSec = savedInstanceState
@@ -69,11 +76,15 @@ public class GameActivity extends AppCompatActivity {
         runTimer();
 
         shuffledPos = shuffle(position);
-        shuffledImages = shuffleImages(images, shuffledPos);
+        shuffledImages = shuffleImages();
 
         gridView = findViewById(R.id.grid_view);
+        Bitmap hidden1 = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.hidden1);
+        Bitmap[] hidden = {hidden1, hidden1, hidden1,hidden1,hidden1,
+                hidden1,hidden1,hidden1,hidden1,hidden1,hidden1,hidden1};
         GridAdapter adapter = new GridAdapter(this, hidden);
         gridView.setAdapter(adapter);
+
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -185,11 +196,11 @@ public class GameActivity extends AppCompatActivity {
     }
 
     //shuffle images based on shuffled position
-    public int[] shuffleImages(int[] images, int[] shuffledPos){
+    public Bitmap[] shuffleImages(){
         int n = images.length;
-        int[] shuffledImages = new int[n];
+        Bitmap[] shuffledImages = new Bitmap[n];
         for(int i = 0; i<n;i++){
-            shuffledImages[i]=images[shuffledPos[i]];
+            shuffledImages[i]=gameImage.get(shuffledPos[i]).getImage();
         }
         return shuffledImages;
     }
@@ -199,20 +210,7 @@ public class GameActivity extends AppCompatActivity {
         return (shuffledPos[prevPos] == shuffledPos[currentPos]);
     }
 
-    public void setBgColor(View view){
-        // Initialize a new color drawable array
-        ColorDrawable[] colors = {
-                new ColorDrawable(Color.RED), // Animation starting color
-                new ColorDrawable(mGridViewBGColor) // Animation ending color
-        };
-        // Initialize a new transition drawable instance
-        TransitionDrawable transitionDrawable = new TransitionDrawable(colors);
-        // Set the clicked item background
-        view.setBackground(transitionDrawable);
-        // Finally, Run the item background color animation
-        // This is the grid view item click effect
-        transitionDrawable.startTransition(200); // 600 Milliseconds
-    }
+
     private void runTimer()
     {
         final TextView timeView
@@ -277,4 +275,27 @@ public class GameActivity extends AppCompatActivity {
         builder.setView(dialoglayout);
         builder.show();
     }
+
+    public void loadGameImage(){
+        for(int i = 0; i < 6; i++) {
+            String name = "image" + i;
+            FileInputStream fileInputStream;
+            Bitmap bitmap = null;
+            try {
+                fileInputStream = getApplicationContext().openFileInput(name);
+                bitmap = BitmapFactory.decodeStream(fileInputStream);
+                gameImage.add(new GridItem(bitmap));
+                fileInputStream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    protected void getGameImages(){
+        for(int i=0; i < 6; i++){
+           gameImage.add(gameImage.get(i));
+        }
+    }
+
 }
