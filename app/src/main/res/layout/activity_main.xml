@@ -3,7 +3,8 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="#f0f0f0">
+    android:layout_margin="10dp"
+    >
     <EditText
         android:id="@+id/url"
         android:layout_width="309dp"
@@ -27,6 +28,7 @@
         android:text="@string/fetch"
         android:textSize="20sp"
         android:layout_alignParentRight="true"
+        style="@style/Widget.AppCompat.Button.Colored"
         />
 
     <TextView
@@ -37,6 +39,8 @@
         android:textSize="20sp"
         android:layout_below="@id/tags"
         android:visibility="invisible"
+        android:gravity="center"
+        android:textColor="#000000"
         />
 
     <GridView
@@ -50,6 +54,7 @@
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:layout_below="@id/info"
+        android:layout_above="@id/status"
         android:verticalSpacing="5dp" />
 
     <WebView
@@ -62,7 +67,7 @@
         android:id="@+id/ProBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="20dp"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
@@ -79,7 +84,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@id/ProBar"
-        android:layout_marginTop="687dp"
+        android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:gravity="center"
         android:textSize="20sp"
@@ -95,7 +100,6 @@
         />
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -105,17 +109,18 @@
 
         <Button
             android:id="@+id/tag_food"
-            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             android:layout_width="0dp"
-            android:text="@string/tag1"
+            android:layout_height="wrap_content"
             android:layout_weight="1"
-            />
+            android:text="@string/tag1" />
         <Button
             android:id="@+id/tag_love"
             android:layout_height="wrap_content"
             android:layout_width="0dp"
             android:text="@string/tag2"
             android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             />
         <Button
             android:id="@+id/tag_biz"
@@ -123,6 +128,7 @@
             android:layout_width="0dp"
             android:text="@string/tag3"
             android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             />
         <Button
             android:id="@+id/tag_ppl"
@@ -130,6 +136,7 @@
             android:layout_width="0dp"
             android:text="@string/tag4"
             android:layout_weight="1"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
             />
         </LinearLayout>
 
