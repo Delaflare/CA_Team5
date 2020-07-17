@@ -50,9 +50,11 @@ public class GameActivity extends AppCompatActivity {
 
     //timer test-code
     private int timerSec = -3;
+    private int countdown = 3;
     private int endTime = 0;
     private boolean running;
     private boolean wasRunning;
+    private boolean gameStarted = false;
 
     public int DOWNLOAD_COMPLETED = 1;
 
@@ -76,14 +78,13 @@ public class GameActivity extends AppCompatActivity {
         }
         runTimer();
         running = true;
-
-        showStartDialog(3);
+        showStartDialog(countdown);
 
         shuffledPos = shuffle(position);
         shuffledImages = shuffleImages();
 
         gridView = findViewById(R.id.grid_view);
-        Bitmap hidden1 = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.hidden1);
+        Bitmap hidden1 = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.placeholder);
         Bitmap[] hidden = {hidden1, hidden1, hidden1, hidden1, hidden1,
                 hidden1, hidden1, hidden1, hidden1, hidden1, hidden1, hidden1};
         GridAdapter adapter = new GridAdapter(this, hidden);
@@ -94,13 +95,13 @@ public class GameActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 GridAdapter adapter = (GridAdapter) gridView.getAdapter();
                 running = true;
-                if (!isFlipped[i] && click == 0) {
+                if (!isFlipped[i] && click == 0 && gameStarted) {
                     isFlipped[i] = true;
                     click++;
                     prevPos = i;
                     adapter.flipImage(i, shuffledImages[i]);
                 }
-                if (!isFlipped[i] && click == 1) {
+                if (!isFlipped[i] && click == 1 && gameStarted) {
 
                     if (!isMatched(prevPos, i)) {
                         click++;
@@ -244,6 +245,17 @@ public class GameActivity extends AppCompatActivity {
 
                 if (running) {
                     timerSec++;
+
+                }
+                if (timerSec == 1) {
+                    gameStarted = true;
+                }
+
+
+                if (timerSec<2) {
+                    showStartDialog(countdown);
+                    countdown--;
+
                 }
 
                 handler.postDelayed(this, 1000);
@@ -287,9 +299,9 @@ public class GameActivity extends AppCompatActivity {
 
     private void showStartDialog(int countdown) {
 
-
+        //countdown--;
         String shownText = Integer.toString(countdown);
-        if(countdown == 0){
+        if (countdown == 0) {
             shownText = "Good Luck!";
         }
         AlertDialog.Builder builder2 = new AlertDialog.Builder(GameActivity.this);
@@ -299,19 +311,19 @@ public class GameActivity extends AppCompatActivity {
 
         TextView messageView2 = (TextView) dialoglayout2.findViewById(R.id.timetostart);
         messageView2.setText(shownText);
-        countdown--;
 
         builder2.setView(dialoglayout2);
         final AlertDialog ad = builder2.show();
+
         final Handler handler = new Handler();
         final int countdowninner = countdown;
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if(countdowninner!=-1) {
+                if(countdowninner!=0) {
+                    //showStartDialog(countdowninner);
                     if (ad.isShowing()) {
                         ad.dismiss();
-                        showStartDialog(countdowninner);
                     }
                 }
                 else{
