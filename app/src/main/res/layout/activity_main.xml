@@ -35,7 +35,7 @@
         android:id="@+id/info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Pick 6 pictures below and Start the game!"
+        android:text="Pick 6 pictures below to start the game!"
         android:textSize="20sp"
         android:layout_below="@id/tags"
         android:visibility="invisible"
@@ -49,13 +49,13 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="false"
         android:clickable="true"
-        android:columnWidth="100dp"
+        android:columnWidth="80dp"
         android:focusable="true"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
         android:layout_below="@id/info"
         android:layout_above="@id/status"
-        android:verticalSpacing="5dp" />
+        android:verticalSpacing="2dp" />
 
     <WebView
         android:id="@+id/web_view"
