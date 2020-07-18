@@ -19,7 +19,10 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -135,18 +138,25 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     @Override
     public void onClick(View v) {
         EditText url = findViewById(R.id.url);
         switch (v.getId()) {
             case R.id.fetch:
-                //Get URl
+                if(prev_url.equals(url.toString())) {
+                    Button btn = findViewById(R.id.fetch); btn.setEnabled(false); }
+
+                if (!selectedImage.isEmpty()) {
+                    gridAdapter.clear();
+                    gridView = findViewById(R.id.gridView);
+                    gridAdapter = new GridViewAdapter(MainActivity.this, R.layout.grid_item, getList());
+                    gridView.setAdapter(gridAdapter);
+                }
+                    //Get URl
                     mUrl = url.getText().toString();
+
                     //Get Images from Website
                     selectedImage.clear();
-
                     mWebView = findViewById(R.id.web_view);
                     WebSettings webSettings = mWebView.getSettings();
                     webSettings.setJavaScriptEnabled(true);
@@ -184,7 +194,6 @@ public class MainActivity extends AppCompatActivity
 
                     TextView textView1 = findViewById(R.id.info);
                     textView1.setVisibility(View.VISIBLE);
-
                 break;
 
             case R.id.tag_food:

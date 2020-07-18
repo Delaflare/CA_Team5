@@ -51,7 +51,7 @@
         android:clickable="true"
         android:columnWidth="100dp"
         android:focusable="true"
-        android:numColumns="auto_fit"
+        android:numColumns="4"
         android:stretchMode="columnWidth"
         android:layout_below="@id/info"
         android:layout_above="@id/status"

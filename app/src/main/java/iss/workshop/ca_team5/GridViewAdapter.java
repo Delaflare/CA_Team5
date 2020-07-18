@@ -10,9 +10,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class GridViewAdapter extends ArrayAdapter {
+
     private Context context;
     private int layoutResourceId;
     private ArrayList data = new ArrayList();

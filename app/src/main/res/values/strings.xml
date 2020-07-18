@@ -11,4 +11,6 @@
     <string name="tag3">business</string>
     <string name="trend">"Popular Tags: "</string>
     <string name="tag4">People</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
