@@ -34,8 +34,11 @@ public class GridViewAdapter extends ArrayAdapter {
             {
                 for(int i=0;i<newImagelist.size();i++)
                 {
+                    if(i<this.data.size())
                     this.data.set(i, newImagelist.get(i));
+
                 }
+                System.out.println("o::"+this.data.size()+" n::"+newImagelist.size());
             }
 
         }else{
