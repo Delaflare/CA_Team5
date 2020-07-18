@@ -166,6 +166,12 @@ public class MainActivity extends AppCompatActivity
             case R.id.fetch:
                 //Get URL
                 if (url != null) {
+                    if(ht!=null){
+                        ht.quit();
+                     //   mainHdl.
+                        //for view
+                       gridAdapter.updateImageList(getList());
+                    }
                     doingRepeat();
                     mUrl = url.getText().toString();
                     //Get Images from Website
@@ -177,7 +183,11 @@ public class MainActivity extends AppCompatActivity
 
                     if(!((completed==0 || prev_url.isEmpty())  || completed==20 || prev_url.equals(url))) // Start//finish//same link
                     {
-                        startCanDownload=false;
+                        //for view
+                        gridView = findViewById(R.id.gridView);
+                        gridAdapter = new GridViewAdapter(this, R.layout.grid_item, getList());
+                        gridView.setAdapter(gridAdapter);
+                       // startCanDownload=false;
                         Message msg1=new Message();
                         msg1.what=STOP_DOWNLOAD;
                         hdl.sendMessage(msg1);
@@ -244,10 +254,12 @@ public class MainActivity extends AppCompatActivity
     Handler mainHdl = new Handler() {
         public void handleMessage(@NonNull Message msg) {
             if (msg.what == DOWNLOAD_COMPLETED) {
-                count++;
+            //    count++;
                 //ArrayList<GridItem> imgItems = new ArrayList<>();
-                imgItems.add(new GridItem((Bitmap) msg.obj));
-                gridAdapter.updateImageList(imgItems);
+                if(startCanDownload!=false) {
+                    imgItems.add(new GridItem((Bitmap) msg.obj));
+                    gridAdapter.updateImageList(imgItems);
+                }
             }
            else if (msg.what == DOWNLOAD_ABORT) {
                if(BKImages.size()>0) {
@@ -259,11 +271,13 @@ public class MainActivity extends AppCompatActivity
                }
             }
 
-            if(count==workingImages.size()){
+            if(completed==workingImages.size()){
                 //gridAdapter.updateImageList(imgItems);
                 startCanDownload=false;
-                workingImages.clear();
+               // workingImages.clear();
+                System.out.println("WL is clear by MainHD");
                 count=0;
+                imgItems.clear();
             }
         }
     };
@@ -300,8 +314,11 @@ public class MainActivity extends AppCompatActivity
                 }
                 if (count == 20) break;
             }
+            BKImages.clear();
             BKImages.addAll(list);
+
             workingImages.clear();
+            System.out.println("WK is clear by new Click");
             workingImages.addAll(list);
 
             startCanDownload = true;
@@ -333,11 +350,12 @@ public class MainActivity extends AppCompatActivity
                     try {
                         super.handleMessage(msg);
                         if (msg.what == START_DOWNLOAD) {
+                            startCanDownload=true;
                             if (hdl != null && ht.isAlive() && workingImages != null && workingImages.size() > 0) {
                                 for(Iterator<String> wk = workingImages.iterator(); wk.hasNext();){
 
                                // for (String i : workingImages) {
-                                    if(msg.what == STOP_DOWNLOAD){break;}
+                                    if(!startCanDownload){break;}
                                     String tt=wk.next();
                                    if (ht.isAlive()) {downloadImage(tt);}
                                    else{break ;}
@@ -348,7 +366,8 @@ public class MainActivity extends AppCompatActivity
                                     ProBar.setProgress(completed);
                                 }
                             } else {
-                                System.out.println(completed);
+                                System.out.println(
+                                        "ppp"+completed);
 
                             }
                         }
@@ -357,7 +376,7 @@ public class MainActivity extends AppCompatActivity
                         // Catch ConcurrentModificationExceptions.
                         Message msg_bk = new Message();
                         msg_bk.what = DOWNLOAD_ABORT;
-                        mainHdl.sendMessage(msg_bk);
+                     //   mainHdl.sendMessage(msg_bk);
                           exception.printStackTrace();
                         System.out.println( workingImages.size());
                           break CHECK;
@@ -372,34 +391,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     protected void downloadImage(String target) throws IOException {
-        int imageLen = 0;
-        int totalSoFar = 0;
-        int readLen = 0;
+
+
         Bitmap bitmap = null;
-        int lastPercent = 0;
-        byte[] imgBytes;
-
-
         try {
             URL url = new URL(target);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.connect();
-
-            imageLen = conn.getContentLength();
-            imgBytes = new byte[imageLen];
-
             InputStream in = url.openStream();
-            BufferedInputStream bufIn = new BufferedInputStream(in, 1024);
+            bitmap = BitmapFactory.decodeStream(in);
+            //compress bitmap
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG,50, stream);
+            byte[] byteArray = stream.toByteArray();
+            Bitmap cmp_bitMap = BitmapFactory.decodeByteArray(byteArray,0,byteArray.length);
+            updateImage(cmp_bitMap);
+            imgStringList.add(cmp_bitMap.toString());
 
-            byte[] data = new byte[1024];
-            while ((readLen = bufIn.read(data)) != -1) {
-                System.arraycopy(data, 0, imgBytes, totalSoFar, readLen);
-                totalSoFar += readLen;
-            }
 
-            bitmap = BitmapFactory.decodeByteArray(imgBytes,0,imageLen);
-            updateImage(bitmap);
-            imgStringList.add(bitmap.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
