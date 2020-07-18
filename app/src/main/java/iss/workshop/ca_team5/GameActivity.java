@@ -31,17 +31,9 @@ public class GameActivity extends AppCompatActivity {
     GridView gridView;
     ArrayList<GridItem> gameImage = new ArrayList<>();
 
-
-    //TODO : to be replace with 6 selected images
-    int[] images = {R.drawable.hug, R.drawable.laugh, R.drawable.peep, R.drawable.snore,
-            R.drawable.stop, R.drawable.tired, R.drawable.hug, R.drawable.laugh, R.drawable.peep, R.drawable.snore,
-            R.drawable.stop, R.drawable.tired};
-
     int[] position = {0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5};
-
     Bitmap[] shuffledImages;
     int[] shuffledPos;
-
     boolean[] isFlipped = {false, false, false, false, false, false, false, false, false, false, false, false};
     int click = 0;
     int currentPos = -1;
@@ -56,17 +48,13 @@ public class GameActivity extends AppCompatActivity {
     private boolean wasRunning;
     private boolean gameStarted = false;
 
-    public int DOWNLOAD_COMPLETED = 1;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        loadGameImage();
-
-        getGameImages();
-        System.out.println(gameImage.size());
+        loadGameImage(); //to retrieve selected image from file
+        getGameImages(); // duplicate game image
 
         if (savedInstanceState != null) {
             timerSec = savedInstanceState
@@ -102,12 +90,10 @@ public class GameActivity extends AppCompatActivity {
                     adapter.flipImage(i, shuffledImages[i]);
                 }
                 if (!isFlipped[i] && click == 1 && gameStarted) {
-
                     if (!isMatched(prevPos, i)) {
                         click++;
                         currentPos = i;
                         adapter.flipImage(i, shuffledImages[i]);
-                        //adapter.flipBack(currentPos, prevPos);
                         final Handler handler = new Handler();
                         handler.postDelayed(new Runnable() {
                             @Override
@@ -203,7 +189,7 @@ public class GameActivity extends AppCompatActivity {
 
     //shuffle images based on shuffled position
     public Bitmap[] shuffleImages() {
-        int n = images.length;
+        int n = gameImage.size();
         Bitmap[] shuffledImages = new Bitmap[n];
         for (int i = 0; i < n; i++) {
             shuffledImages[i] = gameImage.get(shuffledPos[i]).getImage();
