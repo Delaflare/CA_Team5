@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebSettings;
@@ -45,14 +46,12 @@ public class MainActivity extends AppCompatActivity
     ProgressBar ProBar;
     TextView textView;
 
-
     public static int DOWNLOAD_COMPLETED = 2;
     public static int count = 0;
     public int completed = 0;
     private boolean startCanDownload = true;
     public static String prev_url = "";
     private ArrayList<GridItem> imgItems = new ArrayList<>();
-    private ArrayList<String> imgStringList = new ArrayList<>();
 
     //for getting urls
     private String mUrl = "";
@@ -92,33 +91,24 @@ public class MainActivity extends AppCompatActivity
 
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                if (!imgItems.isEmpty()) {
-                    if (selectedImage.contains(imgItems.get(i))) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                if(!imgItems.isEmpty()){
+                    if (selectedImage.contains(imgItems.get(position))) {
                         view.setBackground(null);
-                        selectedImage.remove(imgItems.get(i));
+                        selectedImage.remove(imgItems.get(position));
                     } else {
-                        selectedImage.add(imgItems.get(i));
-                        System.out.println("Selected images are in the below list");
-                        System.out.println(selectedImage);
+                        selectedImage.add(imgItems.get(position));
                         view.setBackground(getDrawable((R.drawable.img_select_border)));
                         if (selectedImage.size() == 6) {
                             Intent intent = new Intent(MainActivity.this, GameActivity.class);
                             saveSelectedImages();
                             startActivity(intent);
-                            //finish();
                         }
                     }
                 }
             }
         });
 
-
-        try {
-            this.getSupportActionBar().hide();   //Remove the action bar
-        } catch (NullPointerException e) {
-        }
-        ;
 
         // add background music
         serviceIntent = new Intent(getApplicationContext(), MyService.class);
@@ -132,7 +122,7 @@ public class MainActivity extends AppCompatActivity
         return null;
     }
 
-    //get the list of images
+    //get the list of default images
     public ArrayList<GridItem> getList() {
         //.clear();
         ArrayList<GridItem> imgList = new ArrayList<>();
@@ -144,6 +134,9 @@ public class MainActivity extends AppCompatActivity
         return imgList;
     }
 
+
+
+
     @Override
     public void onClick(View v) {
         EditText url = findViewById(R.id.url);
@@ -152,6 +145,7 @@ public class MainActivity extends AppCompatActivity
                 //Get URl
                     mUrl = url.getText().toString();
                     //Get Images from Website
+                    selectedImage.clear();
 
                     mWebView = findViewById(R.id.web_view);
                     WebSettings webSettings = mWebView.getSettings();
@@ -161,7 +155,6 @@ public class MainActivity extends AppCompatActivity
                     if (!((completed == 0 || prev_url.isEmpty()) || completed == 20 || prev_url.equals(url))) // Start//finish//same link
                     {
                         //for view
-//
                         gridAdapter.updateImageList(getList());
                         startCanDownload = false;
                         completed = 0;
@@ -223,7 +216,6 @@ public class MainActivity extends AppCompatActivity
             if (completed == workingImages.size()) {
                 startCanDownload = false;
                 count = 0;
-                imgItems.clear();
             }
         }
     };
@@ -286,7 +278,6 @@ public class MainActivity extends AppCompatActivity
             Bitmap cmp_bitMap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             if (startCanDownload != false) {
                 updateImage(cmp_bitMap);
-                imgStringList.add(cmp_bitMap.toString());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -340,8 +331,6 @@ public class MainActivity extends AppCompatActivity
                 ex.printStackTrace();
             }
             downloadedNo = 0;
-
-
         }
 
     };
@@ -354,4 +343,9 @@ public class MainActivity extends AppCompatActivity
         download.run();
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        this.finish();
+    }
 }//end of all

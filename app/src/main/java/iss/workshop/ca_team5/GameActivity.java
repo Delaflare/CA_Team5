@@ -263,7 +263,7 @@ public class GameActivity extends AppCompatActivity {
         builder.setPositiveButton("Play Again!", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                finish();
+                startActivity(new Intent(GameActivity.this, MainActivity.class));
                 dialog.dismiss();
 
             }
