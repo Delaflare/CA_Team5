@@ -55,6 +55,8 @@ public class GameActivity extends AppCompatActivity {
 
         loadGameImage(); //to retrieve selected image from file
         getGameImages(); // duplicate game image
+        shuffledPos = shuffle(position); //shuffle image position
+        shuffledImages = shuffleImages(); //shuffle images based on position
 
         if (savedInstanceState != null) {
             timerSec = savedInstanceState
@@ -67,9 +69,6 @@ public class GameActivity extends AppCompatActivity {
         runTimer();
         running = true;
         showStartDialog(countdown);
-
-        shuffledPos = shuffle(position);
-        shuffledImages = shuffleImages();
 
         gridView = findViewById(R.id.grid_view);
         Bitmap hidden1 = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.placeholder);
