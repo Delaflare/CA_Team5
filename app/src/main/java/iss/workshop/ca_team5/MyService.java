@@ -24,7 +24,7 @@ public class MyService extends Service {
     public void onCreate()
     {
         Toast.makeText(this, "Service Created", Toast.LENGTH_SHORT).show();
-        player = MediaPlayer.create(this, R.raw.over_the_rainbow);
+        player = MediaPlayer.create(this, R.raw.cateam5bgm);
         player.start();
         player.setLooping(true);
 
