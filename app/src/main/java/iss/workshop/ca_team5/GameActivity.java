@@ -33,7 +33,6 @@ public class GameActivity extends AppCompatActivity {
     GridView gridView;
     ArrayList<GridItem> gameImage = new ArrayList<>();
 
-    //ian code
     MediaPlayer player1;
     MediaPlayer player2;
 
@@ -46,7 +45,7 @@ public class GameActivity extends AppCompatActivity {
     int prevPos = -1;
     int count = 0;
 
-    //timer test-code
+    //timer
     private int timerSec = -3;
     private int countdown = 3;
     private int endTime = 0;
@@ -58,7 +57,6 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
-
 
 
         loadGameImage(); //to retrieve selected image from file
@@ -78,7 +76,7 @@ public class GameActivity extends AppCompatActivity {
         running = true;
         showStartDialog(countdown);
 
-        //ian code
+
         player1 = MediaPlayer.create(this, R.raw.wrong);
         player2 = MediaPlayer.create(this, R.raw.correct);
 

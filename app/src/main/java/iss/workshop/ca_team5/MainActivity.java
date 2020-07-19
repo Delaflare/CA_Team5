@@ -282,7 +282,7 @@ public class MainActivity extends AppCompatActivity
             bitmap = BitmapFactory.decodeStream(in);
             //compress bitmap
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.PNG, 50, stream);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
             byte[] byteArray = stream.toByteArray();
             Bitmap cmp_bitMap = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
             if (startCanDownload != false) {

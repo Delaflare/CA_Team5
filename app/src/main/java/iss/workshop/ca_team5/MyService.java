@@ -10,8 +10,6 @@ public class MyService extends Service {
 
     MediaPlayer player;
 
-
-
     public MyService() {
     }
 
@@ -23,7 +21,6 @@ public class MyService extends Service {
 
     public void onCreate()
     {
-        Toast.makeText(this, "Service Created", Toast.LENGTH_SHORT).show();
         player = MediaPlayer.create(this, R.raw.cateam5bgm);
         player.start();
         player.setLooping(true);
@@ -32,12 +29,9 @@ public class MyService extends Service {
 
     public void onForeGroundService(Intent intent, int startId)
     {
-        Toast.makeText(this, "Service Started", Toast.LENGTH_SHORT).show();
-
     }
     public void onDestory()
     {
-        Toast.makeText(this, "Service Stop", Toast.LENGTH_SHORT).show();
         player.stop();
     }
 
