@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -63,11 +64,11 @@ public class MainActivity extends AppCompatActivity
     static List<String> workingImages = new ArrayList<String>();
     public ArrayList<GridItem> selectedImage = new ArrayList<GridItem>();
 
+    boolean fullyLoaded = false;
+    private long mLastClickTime = 0;
+
     //for music
     private Intent serviceIntent;
-
-    public static int downloadedNo = 0;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                if(!imgItems.isEmpty()){
+                if(fullyLoaded){
                     if (selectedImage.contains(imgItems.get(position))) {
                         view.setBackground(null);
                         selectedImage.remove(imgItems.get(position));
@@ -145,57 +146,58 @@ public class MainActivity extends AppCompatActivity
         EditText url = findViewById(R.id.url);
         switch (v.getId()) {
             case R.id.fetch:
-                if(prev_url.equals(url.toString())) {
-                    Button btn = findViewById(R.id.fetch); btn.setEnabled(false); }
-
-                if (!selectedImage.isEmpty()) {
-                    gridAdapter.clear();
-                    gridView = findViewById(R.id.gridView);
-                    gridAdapter = new GridViewAdapter(MainActivity.this, R.layout.grid_item, getList());
-                    gridView.setAdapter(gridAdapter);
+                fullyLoaded = false;
+                // mis-clicking prevention, using threshold of 1000 ms
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
+                    return;
                 }
-                    //Get URl
-                    mUrl = url.getText().toString();
+                mLastClickTime = SystemClock.elapsedRealtime();
 
-                    //Get Images from Website
-                    selectedImage.clear();
-                    mWebView = findViewById(R.id.web_view);
-                    WebSettings webSettings = mWebView.getSettings();
-                    webSettings.setJavaScriptEnabled(true);
-                    //stop current download
+                for(int i = 0; i < gridView.getChildCount(); i++) {
+                    gridView.getChildAt(i).setBackground(null);
+                }
+                //Get URl
+                mUrl = url.getText().toString();
 
-                    if (!((completed == 0 || prev_url.isEmpty()) || completed == 20 || prev_url.equals(url))) // Start//finish//same link
-                    {
-                        //for view
-                        gridAdapter.updateImageList(getList());
-                        startCanDownload = false;
-                        completed = 0;
+                //Get Images from Website
+                selectedImage.clear();
+                mWebView = findViewById(R.id.web_view);
+                WebSettings webSettings = mWebView.getSettings();
+                webSettings.setJavaScriptEnabled(true);
+                //stop current download
 
-                    }
-                    mWebView.setWebViewClient(new WebViewClient() {
-                        @Override
-                        public void onPageFinished (WebView view, String url) {
-                            /* This call inject JavaScript into the page which just finished loading. */
-                            if (!prev_url.equals(url)) {
-                                imgItems.clear();
-                                gridAdapter.updateImageList(getList());
-                                String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
-                                mWebView.loadUrl(l_url);
-                                completed = 0;
-                                startCanDownload = true;
+                if (!((completed == 0 || prev_url.isEmpty()) || completed == 20 || prev_url.equals(mUrl) || mUrl.equals("https://stocksnap.io"))) // Start//finish//same link
+                {
+                    //for view
+                    gridAdapter.updateImageList(getList());
+                    startCanDownload = false;
+                    completed = 0;
+                }
+
+                mWebView.setWebViewClient(new WebViewClient() {
+                    @Override
+                    public void onPageFinished (WebView view, String url) {
+                        /* This call inject JavaScript into the page which just finished loading. */
+                        if (!prev_url.equals(url)) {
+                            imgItems.clear();
+                            gridAdapter.updateImageList(getList());
+                            String l_url = "javascript:window.HTMLOUT.processHTML('" + url + "','<head>'+document.getElementsByTagName('html')[0].innerHTML+'</head>');";
+                            mWebView.loadUrl(l_url);
+                            completed = 0;
+                            startCanDownload = true;
 //                                //set probar visible after download start
-                                textView = findViewById(R.id.status);
-                                ProBar = findViewById(R.id.ProBar);
-                                textView.setVisibility(View.VISIBLE);
-                                ProBar.setVisibility(View.VISIBLE);
-                            }
+                            textView = findViewById(R.id.status);
+                            ProBar = findViewById(R.id.ProBar);
+                            textView.setVisibility(View.VISIBLE);
+                            ProBar.setVisibility(View.VISIBLE);
                         }
-                    });
-                    mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
-                    mWebView.loadUrl(mUrl);
+                    }
+                });
+                mWebView.addJavascriptInterface(new MyJavaScriptInterface(), "HTMLOUT");
+                mWebView.loadUrl(mUrl);
 
-                    TextView textView1 = findViewById(R.id.info);
-                    textView1.setVisibility(View.VISIBLE);
+                TextView textView1 = findViewById(R.id.info);
+                textView1.setVisibility(View.VISIBLE);
                 break;
 
             case R.id.tag_food:
@@ -334,12 +336,15 @@ public class MainActivity extends AppCompatActivity
                         completed++;// ian code
                         textView.setText(completed + "/20 has been downloaded");// ian
                         ProBar.setProgress(completed);
+                        if (completed == 20) {
+                            fullyLoaded = true;
+                            break;
+                        }
                     }
                 }
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-            downloadedNo = 0;
         }
 
     };
