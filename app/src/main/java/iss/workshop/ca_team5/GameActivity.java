@@ -81,7 +81,6 @@ public class GameActivity extends AppCompatActivity {
         }
         runTimer();
         running = true;
-        showStartDialog(countdown);
 
 
         player1 = MediaPlayer.create(this, R.raw.wrong);
@@ -267,7 +266,6 @@ public class GameActivity extends AppCompatActivity {
                 if (timerSec<2) {
                     showStartDialog(countdown);
                     countdown--;
-
                 }
 
                 handler.postDelayed(this, 1000);
@@ -286,30 +284,6 @@ public class GameActivity extends AppCompatActivity {
                 .format(Locale.getDefault(),
                         "%d:%02d",
                         minutes, secs);
-//        AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
-//
-//        builder.setPositiveButton("Play Again!", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                startActivity(new Intent(GameActivity.this, MainActivity.class));
-//                dialog.dismiss();
-//
-//            }
-//        });
-//
-//        LayoutInflater inflater = getLayoutInflater();
-//        View dialoglayout = inflater.inflate(R.layout.game_end_dialog, null);
-//
-//        TextView messageView = (TextView) dialoglayout.findViewById(R.id.timetaken);
-//        if (minutes != 0) {
-//            messageView.setText("You took " + minutes + " minutes and " + secs + " seconds!");
-//        } else {
-//            messageView.setText("Amazing! You only took " + secs + " seconds!");
-//        }
-//
-//        builder.setView(dialoglayout);
-//        builder.show();
-
 
         //TestWPP
         Intent intent = new Intent(GameActivity.this, ShowSuccessActivity.class);
@@ -343,21 +317,12 @@ public class GameActivity extends AppCompatActivity {
         final AlertDialog ad = builder2.show();
 
         final Handler handler = new Handler();
-        final int countdowninner = countdown;
         final Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                if(countdowninner!=0) {
-                    //showStartDialog(countdowninner);
                     if (ad.isShowing()) {
                         ad.dismiss();
                     }
-                }
-                else{
-                    if (ad.isShowing()) {
-                        ad.dismiss();
-                    }
-                }
             }
         };
 

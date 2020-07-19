@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<GridItem> imgItems = new ArrayList<>();
 
     //for getting urls
-    private String mUrl = "";
+    private static String mUrl = "";
     private WebView mWebView;
     private static final String EXTENSION_PATTERN = "([^\\s]+(\\.(?i)(jpg|png))$)";
     static List<String> workingImages = new ArrayList<String>();
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        prev_url = "";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -146,7 +147,6 @@ public class MainActivity extends AppCompatActivity
         EditText url = findViewById(R.id.url);
         switch (v.getId()) {
             case R.id.fetch:
-                fullyLoaded = false;
                 // mis-clicking prevention, using threshold of 1000 ms
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000){
                     return;
@@ -164,8 +164,8 @@ public class MainActivity extends AppCompatActivity
                 mWebView = findViewById(R.id.web_view);
                 WebSettings webSettings = mWebView.getSettings();
                 webSettings.setJavaScriptEnabled(true);
-                //stop current download
 
+                //stop current download
                 if (!((completed == 0 || prev_url.isEmpty()) || completed == 20 || prev_url.equals(mUrl) || mUrl.equals("https://stocksnap.io"))) // Start//finish//same link
                 {
                     //for view
@@ -332,6 +332,7 @@ public class MainActivity extends AppCompatActivity
                     }
 
                     if (startCanDownload) {
+                        fullyLoaded = false;
                         downloadImage(i);
                         completed++;// ian code
                         textView.setText(completed + "/20 has been downloaded");// ian
