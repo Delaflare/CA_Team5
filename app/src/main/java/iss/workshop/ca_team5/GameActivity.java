@@ -12,6 +12,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -57,6 +58,12 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        final Toast wrong = Toast.makeText(getApplicationContext(), "Not Match", Toast.LENGTH_SHORT);
+
+
+        final Toast correct = Toast.makeText(getApplicationContext(), "Match", Toast.LENGTH_SHORT);
+        wrong.setGravity(Gravity.CENTER, 0, 0);
+        correct.setGravity(Gravity.CENTER, 0, 0);
 
 
         loadGameImage(); //to retrieve selected image from file
@@ -121,13 +128,17 @@ public class GameActivity extends AppCompatActivity {
                         //add sound
 
                         player1.start();
-                        Toast.makeText(getApplicationContext(), "Not Match", Toast.LENGTH_SHORT).show();
+                        wrong.setGravity(Gravity.CENTER, 0, 0);
+                        wrong.show();
+
                     } else {
                         adapter.flipImage(i, shuffledImages[i]);
                         isFlipped[i] = true;
                         // add sound
                         player2.start();
-                        Toast.makeText(getApplicationContext(), "Match", Toast.LENGTH_SHORT).show();
+                        correct.setGravity(Gravity.CENTER, 0, 0);
+
+                        correct.show();
                         count++;
                         System.out.println(count);
                         prevPos = -1;
@@ -138,6 +149,8 @@ public class GameActivity extends AppCompatActivity {
                         if (count == 6) {
                             running = false;
                             endTime = timerSec;
+                            wrong.cancel();
+                            correct.cancel();
                             showEndDialog(endTime);
                         }
 
@@ -263,6 +276,8 @@ public class GameActivity extends AppCompatActivity {
     }
 
     private void showEndDialog(int endTime) {
+
+
 
         int minutes = (endTime % 3600) / 60;
         int secs = endTime % 60;

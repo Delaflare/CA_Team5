@@ -14,7 +14,8 @@
         android:scaleType="fitCenter"
         app:lottie_autoPlay="true"
         app:lottie_loop="true"
-        app:lottie_rawRes="@raw/fireworks" />
+        app:lottie_rawRes="@raw/fireworks"
+        tools:ignore="MissingClass" />
 
     <TextView
         android:id="@+id/msg"
@@ -22,8 +23,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/animationView"
         android:layout_marginTop="28dp"
-        android:text="No Internet Connection"
-        android:textSize="20dp" />
+        android:text="Message"
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"/>
 
     <Button
         android:id="@+id/play_again"
@@ -33,5 +37,8 @@
         android:layout_marginTop="20dp"
         android:text="Play Again"
         android:gravity="center"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_centerInParent="true"/>
 </RelativeLayout>
