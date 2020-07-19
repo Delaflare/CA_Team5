@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -31,6 +32,10 @@ public class GameActivity extends AppCompatActivity {
 
     GridView gridView;
     ArrayList<GridItem> gameImage = new ArrayList<>();
+
+    //ian code
+    //MediaPlayer player1;
+    //MediaPlayer player2;
 
     int[] position = {0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5};
     Bitmap[] shuffledImages;
@@ -71,6 +76,11 @@ public class GameActivity extends AppCompatActivity {
         running = true;
         showStartDialog(countdown);
 
+        //ian code
+        //player1 = MediaPlayer.create(this, R.raw.wrong);
+        //player2 = MediaPlayer.create(this, R.raw.correct);
+
+
         gridView = findViewById(R.id.grid_view);
         Bitmap hidden1 = BitmapFactory.decodeResource(getApplicationContext().getResources(), R.drawable.placeholder);
         Bitmap[] hidden = {hidden1, hidden1, hidden1, hidden1, hidden1,
@@ -109,11 +119,14 @@ public class GameActivity extends AppCompatActivity {
                         isFlipped[i] = false;
                         isFlipped[prevPos] = false;
                         //add sound
+
+                        //player1.start();
                         Toast.makeText(getApplicationContext(), "Not Match", Toast.LENGTH_SHORT).show();
                     } else {
                         adapter.flipImage(i, shuffledImages[i]);
                         isFlipped[i] = true;
                         // add sound
+                        //player2.start();
                         Toast.makeText(getApplicationContext(), "Match", Toast.LENGTH_SHORT).show();
                         count++;
                         System.out.println(count);
