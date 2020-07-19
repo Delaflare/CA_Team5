@@ -30,7 +30,7 @@ public class MyService extends Service {
     public void onForeGroundService(Intent intent, int startId)
     {
     }
-    public void onDestory()
+    public void onDestroy()
     {
         player.stop();
     }

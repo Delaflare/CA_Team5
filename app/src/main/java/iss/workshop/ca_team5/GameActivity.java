@@ -390,7 +390,8 @@ public class GameActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == THIRD_ACTIVITY_REQUEST) {
 
-                finish();
+            startActivity(new Intent(GameActivity.this, MainActivity.class));
+            finish();
             }
         }
     }
