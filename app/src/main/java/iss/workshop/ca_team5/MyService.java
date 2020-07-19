@@ -21,7 +21,7 @@ public class MyService extends Service {
 
     public void onCreate()
     {
-        player = MediaPlayer.create(this, R.raw.cateam5bgm);
+        player = MediaPlayer.create(this, R.raw.cateam5_bgm);
         player.start();
         player.setLooping(true);
 

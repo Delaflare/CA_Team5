@@ -271,32 +271,45 @@ public class GameActivity extends AppCompatActivity {
                 .format(Locale.getDefault(),
                         "%d:%02d",
                         minutes, secs);
-        AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+//        AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
+//
+//        builder.setPositiveButton("Play Again!", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                startActivity(new Intent(GameActivity.this, MainActivity.class));
+//                dialog.dismiss();
+//
+//            }
+//        });
+//
+//        LayoutInflater inflater = getLayoutInflater();
+//        View dialoglayout = inflater.inflate(R.layout.game_end_dialog, null);
+//
+//        TextView messageView = (TextView) dialoglayout.findViewById(R.id.timetaken);
+//        if (minutes != 0) {
+//            messageView.setText("You took " + minutes + " minutes and " + secs + " seconds!");
+//        } else {
+//            messageView.setText("Amazing! You only took " + secs + " seconds!");
+//        }
+//
+//        builder.setView(dialoglayout);
+//        builder.show();
 
-        builder.setPositiveButton("Play Again!", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(GameActivity.this, MainActivity.class));
-                dialog.dismiss();
 
-            }
-        });
-
-        LayoutInflater inflater = getLayoutInflater();
-        View dialoglayout = inflater.inflate(R.layout.game_end_dialog, null);
-
-        TextView messageView = (TextView) dialoglayout.findViewById(R.id.timetaken);
+        //TestWPP
+        Intent intent = new Intent(GameActivity.this, ShowSuccessActivity.class);
         if (minutes != 0) {
-            messageView.setText("You took " + minutes + " minutes and " + secs + " seconds!");
+            intent.putExtra("showMsg","You took " + minutes + " minutes and " + secs + " seconds!");
         } else {
-            messageView.setText("Amazing! You only took " + secs + " seconds!");
+            intent.putExtra("showMsg","Amazing! You only took " + secs + " seconds!");
         }
+        startActivityForResult(intent,THIRD_ACTIVITY_REQUEST );
 
-        builder.setView(dialoglayout);
-        builder.show();
+        //
     }
 
     private void showStartDialog(int countdown) {
+
 
         //countdown--;
         String shownText = Integer.toString(countdown);
@@ -370,4 +383,14 @@ public class GameActivity extends AppCompatActivity {
         super.onBackPressed();
         startActivity(new Intent(this, MainActivity.class));
     }
-}
+
+    static final int THIRD_ACTIVITY_REQUEST = 1;
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == THIRD_ACTIVITY_REQUEST) {
+
+                finish();
+            }
+        }
+    }
