@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity
                         view.setBackground(getDrawable((R.drawable.img_select_border)));
                         if (selectedImage.size() == 6) {
                             Intent intent = new Intent(MainActivity.this, GameActivity.class);
+                            stopService(new Intent(MainActivity.this, MyService.class));
                             saveSelectedImages();
                             startActivity(intent);
                         }
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity
         // add background music
         serviceIntent = new Intent(getApplicationContext(), MyService.class);
         startService(new Intent(getApplicationContext(), MyService.class));
+
 
     }
 
@@ -271,8 +273,6 @@ public class MainActivity extends AppCompatActivity
 
 
     protected void downloadImage(String target) throws IOException {
-
-
         Bitmap bitmap = null;
         try {
             URL url = new URL(target);

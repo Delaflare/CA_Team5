@@ -59,6 +59,8 @@ public class GameActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
+
+
         loadGameImage(); //to retrieve selected image from file
         getGameImages(); // duplicate game image
         shuffledPos = shuffle(position); //shuffle image position
