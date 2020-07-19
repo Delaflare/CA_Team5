@@ -34,8 +34,8 @@ public class GameActivity extends AppCompatActivity {
     ArrayList<GridItem> gameImage = new ArrayList<>();
 
     //ian code
-    //MediaPlayer player1;
-    //MediaPlayer player2;
+    MediaPlayer player1;
+    MediaPlayer player2;
 
     int[] position = {0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5};
     Bitmap[] shuffledImages;
@@ -77,8 +77,8 @@ public class GameActivity extends AppCompatActivity {
         showStartDialog(countdown);
 
         //ian code
-        //player1 = MediaPlayer.create(this, R.raw.wrong);
-        //player2 = MediaPlayer.create(this, R.raw.correct);
+        player1 = MediaPlayer.create(this, R.raw.wrong);
+        player2 = MediaPlayer.create(this, R.raw.correct);
 
 
         gridView = findViewById(R.id.grid_view);
@@ -120,13 +120,13 @@ public class GameActivity extends AppCompatActivity {
                         isFlipped[prevPos] = false;
                         //add sound
 
-                        //player1.start();
+                        player1.start();
                         Toast.makeText(getApplicationContext(), "Not Match", Toast.LENGTH_SHORT).show();
                     } else {
                         adapter.flipImage(i, shuffledImages[i]);
                         isFlipped[i] = true;
                         // add sound
-                        //player2.start();
+                        player2.start();
                         Toast.makeText(getApplicationContext(), "Match", Toast.LENGTH_SHORT).show();
                         count++;
                         System.out.println(count);
